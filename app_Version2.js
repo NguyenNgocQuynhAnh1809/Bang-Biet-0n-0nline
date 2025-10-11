@@ -73,7 +73,8 @@ submitBtn.addEventListener('click', async () => {
     window.location.href = './board.html';
   } catch (e) {
     console.error(e);
-    alert('Gửi thất bại. Vui lòng thử lại.');
+    const errorMsg = e.code ? `Gửi thất bại (${e.code}). Vui lòng thử lại.` : 'Gửi thất bại. Vui lòng thử lại.';
+    alert(errorMsg);
   } finally {
     submitBtn.disabled = false;
     submitBtn.textContent = 'Gửi và xem bảng';
