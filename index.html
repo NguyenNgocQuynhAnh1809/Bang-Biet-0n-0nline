@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bảng biết ơn - Gửi lời hôm nay</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body class="bg">
+  <header class="topbar">
+    <button class="icon-btn" id="closeBtn" aria-label="Đóng">✕</button>
+    <h1 class="title">Me+</h1>
+    <button class="icon-btn" id="shareBtn" aria-label="Chia sẻ">⤴</button>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <div class="polaroid">
+        <div class="artwork" aria-hidden="true"></div>
+        <label class="gratitude-input-wrapper" for="gratitude">
+          <textarea id="gratitude" class="gratitude-input" rows="2" maxlength="240" placeholder="Viết lời biết ơn hôm nay..."></textarea>
+        </label>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="panel-title">Hôm nay bạn thấy thế nào?</h2>
+      <div class="mood-list" id="moodList" role="group" aria-label="Chọn cảm xúc"></div>
+      <button id="submitBtn" class="primary-btn" disabled>Gửi và xem bảng</button>
+      <p class="hint">Lời biết ơn được lưu ẩn danh. Tối đa 240 ký tự. Mỗi người 1 lần/ngày.</p>
+    </section>
+  </main>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
