@@ -5,7 +5,8 @@ const legendEl = document.getElementById('legend');
 const barEl = document.getElementById('bar');
 const totalEl = document.getElementById('total');
 
-const orderKeys = ['bad','notgreat','okay','good','great'];
+// Chỉ còn 4 cảm xúc
+const orderKeys = ['notgreat','okay','good','great'];
 
 function renderLegend(stats){
   legendEl.innerHTML = '';
@@ -67,7 +68,7 @@ function renderGrid(items){
 }
 
 listenGratitudes((items) => {
-  const stats = { bad:0, notgreat:0, okay:0, good:0, great:0 };
+  const stats = { notgreat:0, okay:0, good:0, great:0 };
   for (const it of items) {
     if (stats[it.emotionKey] !== undefined) stats[it.emotionKey]++;
   }
