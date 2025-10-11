@@ -19,7 +19,7 @@ Mục tiêu
 
 ## Deploy GitHub Pages
 - Repo Settings → Pages → Deploy from a branch → Branch: `main` / `root` → Save.
-- URL dự kiến: `https://nguyenngocquynhanh1809.github.io/B-ng-Bi-t-n-online/`
+- URL dự kiến: `https://nguyenngocquynhanh1809.github.io/Bang-Biet-0n-0nline/`
 
 ## Kỹ thuật
 - Cache offline: `persistentLocalCache` (IndexedDB) giúp tải nhanh.
