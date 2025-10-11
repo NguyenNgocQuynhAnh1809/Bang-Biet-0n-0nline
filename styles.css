@@ -20,6 +20,63 @@ body.bg{
   body.bg{ background-attachment: scroll; }
 }
 
+/* 1) Căn giữa tiêu đề, ẩn icon sau tiêu đề */
+.panel-title{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+}
+.title-icons{ display:none; }
+
+/* 2) Căn giữa 4 nút hình cảm xúc */
+.mood-list{
+  display:flex;
+  justify-content:center;   /* đưa các nút vào giữa */
+  gap:16px;                 /* khoảng cách giữa các nút */
+  overflow:visible;         /* không cần thanh cuộn ngang */
+  padding:8px 0 12px;
+}
+
+/* 3) Bỏ khung đen/nền của các nút cảm xúc (dùng ảnh PNG tách nền) */
+.mood-btn{
+  background:transparent !important;
+  border:0 !important;
+  padding:6px 8px;
+}
+.mood-btn .face{
+  width:64px; height:64px;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  display:grid; place-items:center;
+}
+.mood-btn .face img{
+  width:64px; height:64px;
+  object-fit:contain; display:block;
+  border-radius:0; /* giữ viền vuông cho ảnh PNG tách nền */
+}
+/* Khi chọn không viền đen */
+.mood-btn.active .face{ outline:none !important; }
+
+/* 4) Nút Gửi: trong suốt màu xám */
+.primary-btn{
+  margin-top:12px; width:100%;
+  padding:12px 16px;
+  font-weight:700;
+  background:transparent;               /* trong suốt */
+  color:#6b7280;                        /* xám */
+  border:2px solid rgba(107,114,128,.6);/* viền xám nhạt */
+  border-radius:12px;
+  box-shadow:none;                      /* bỏ đổ bóng */
+}
+.primary-btn:not(:disabled):hover{
+  background:rgba(107,114,128,.08);     /* hover xám nhạt */
+}
+.primary-btn:disabled{
+  opacity:.55; cursor:not-allowed;
+}
+
 /* Top bar */
 .topbar{height:56px; display:grid; grid-template-columns:56px 1fr 56px; align-items:center; padding:0 8px}
 .title{margin:0; text-align:center; font-weight:900; letter-spacing:.6px; text-transform:uppercase}
