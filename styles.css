@@ -7,9 +7,17 @@
 html,body{margin:0}
 body.bg{
   min-height:100svh;
-  background:linear-gradient(180deg,var(--bg2),var(--bg1));
+  /* Dùng ảnh làm nền + lớp phủ trắng để chữ dễ đọc */
+  background:
+    linear-gradient(rgba(255,255,255,.6), rgba(255,255,255,.6)),
+    url('./hoa.jpg') center/cover no-repeat;
   color:var(--ink);
   font:16px/1.4 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+}
+
+/* Tránh giật trên mobile (tùy chọn): nếu muốn cố định ảnh, thêm background-attachment: fixed; */
+@media (max-width: 768px){
+  body.bg{ background-attachment: scroll; }
 }
 
 /* Top bar */
