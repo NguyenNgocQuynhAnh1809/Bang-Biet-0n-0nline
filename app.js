@@ -80,6 +80,11 @@ submitBtn.addEventListener('click', async () => {
   }
 });
 
+// Close button navigates to board
+document.getElementById('closeBtn')?.addEventListener('click', () => {
+  window.location.href = './board.html';
+});
+
 // Optional: simple share button
 document.getElementById('shareBtn')?.addEventListener('click', async () => {
   const url = location.origin + location.pathname.replace(/index\.html?$/,'');
