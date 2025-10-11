@@ -1,31 +1,24 @@
-// Firebase v10 modular qua CDN, bật cache offline để mượt
+// Firebase v10 modular via CDN
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js';
 import {
-  getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
-  collection, doc, setDoc, getDoc, serverTimestamp,
-  onSnapshot, query, orderBy, limit
+  getFirestore, collection, doc, setDoc, getDoc,
+  serverTimestamp, onSnapshot, query, orderBy, limit
 } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
 
 import { firebaseConfig } from './firebase-config.js';
 
-// Khởi tạo Firestore với cache bền (IndexedDB)
 const app = initializeApp(firebaseConfig);
-initializeFirestore(app, {
-  localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
-  ignoreUndefinedProperties: true
-});
 const db = getFirestore(app);
 
-// Cảm xúc
+// Chỉ còn 4 cảm xúc, dùng ảnh PNG bạn cung cấp
 export const EMOTIONS = {
-  bad:      { label:'Bad',       icon:'😠', color:'var(--bad)', score:1 },
-  notgreat: { label:'Not Great', icon:'😕', color:'var(--notgreat)', score:2 },
-  okay:     { label:'Okay',      icon:'😐', color:'var(--okay)', score:3 },
-  good:     { label:'Good',      icon:'🙂', color:'var(--good)', score:4 },
-  great:    { label:'Great',     icon:'😄', color:'var(--great)', score:5 },
+  notgreat: { label:'Not Great', img:'./notgreat.png', color:'var(--notgreat)', score:1 },
+  okay:     { label:'Okay',      img:'./okay.png',     color:'var(--okay)',     score:2 },
+  good:     { label:'Good',      img:'./good.png',     color:'var(--good)',     score:3 },
+  great:    { label:'Great',     img:'./great.png',    color:'var(--great)',    score:4 },
 };
 
-// Tạo khoá ngày theo múi giờ VN
+// Vietnam local date key (YYYY-MM-DD) for daily limit
 export function getDateKey(tz='Asia/Ho_Chi_Minh'){
   const d = new Date();
   const y = new Intl.DateTimeFormat('en-CA',{ timeZone: tz, year:'numeric'}).format(d);
@@ -34,13 +27,13 @@ export function getDateKey(tz='Asia/Ho_Chi_Minh'){
   return `${y}-${m}-${day}`;
 }
 
-export async function hasSubmittedToday(clientId, dateKey=getDateKey()) {
-  const id = `${clientId}_${dateKey}`;
-  const snap = await getDoc(doc(db, 'gratitudes', id));
+export async function hasSubmittedToday(clientId, dateKey=getDateKey()){
+  const docId = `${clientId}_${dateKey}`;
+  const ref = doc(db, 'gratitudes', docId);
+  const snap = await getDoc(ref);
   return snap.exists();
 }
 
-// Ghi dữ liệu: 1/ngày theo docId cố định
 export async function addGratitude({ text, emotionKey, emotionLabel, color, moodScore, clientId, dateKey }) {
   const clean = text.replace(/\s+/g,' ').trim().slice(0, 240);
   if (!clean) throw new Error('Empty text');
@@ -58,7 +51,6 @@ export async function addGratitude({ text, emotionKey, emotionLabel, color, mood
   return docId;
 }
 
-// Lắng nghe realtime (mới nhất)
 export function listenGratitudes(callback){
   const qy = query(collection(db, 'gratitudes'), orderBy('createdAt','desc'), limit(300));
   return onSnapshot(qy, (snap) => {
@@ -69,8 +61,8 @@ export function listenGratitudes(callback){
         text: data.text || '',
         emotionKey: data.emotionKey || '',
         emotionLabel: data.emotionLabel || '',
-        color: data.color || '#eee',
-        createdAt: (data.createdAt && data.createdAt.toMillis) ? data.createdAt.toMillis() : Date.now(),
+        color: data.color || '',
+        createdAt: data.createdAt?.toMillis ? data.createdAt.toMillis() : Date.now(),
       };
     });
     callback(items);
