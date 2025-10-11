@@ -13,6 +13,7 @@ for (const key of Object.keys(EMOTIONS)) {
   btn.className = 'mood-btn';
   btn.dataset.key = key;
   btn.type = 'button';
+  btn.setAttribute('aria-pressed', 'false'); // THÊM: trạng thái mặc định
 
   if (m.img) {
     btn.classList.add('has-img');
@@ -26,7 +27,12 @@ for (const key of Object.keys(EMOTIONS)) {
 
   btn.addEventListener('click', () => {
     chosenKey = key;
-    for (const b of moodListEl.querySelectorAll('.mood-btn')) b.classList.toggle('active', b === btn);
+    // THÊM: cập nhật cả aria-pressed để đánh dấu nút đang chọn
+    for (const b of moodListEl.querySelectorAll('.mood-btn')) {
+      const isActive = b === btn;
+      b.classList.toggle('active', isActive);
+      b.setAttribute('aria-pressed', String(isActive));
+    }
     updateSubmitState();
   });
   moodListEl.appendChild(btn);
