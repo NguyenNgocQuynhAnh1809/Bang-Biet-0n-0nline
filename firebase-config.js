@@ -1,10 +1,10 @@
-// Cấu hình Firebase (đã dùng thông tin bạn cung cấp)
+// Cấu hình Web app của bạn (từ Firebase Console)
 export const firebaseConfig = {
-  apiKey: "AIzaSyD9i4irmBVVxKx86b7M7e0J8_Y_Gx22-5I",
-  authDomain: "bangbieton.firebaseapp.com",
-  projectId: "bangbieton",
-  storageBucket: "bangbieton.appspot.com",
-  messagingSenderId: "968284385913",
-  appId: "1:968284385913:web:ae13d3a98fc82253b69aa8",
-  measurementId: "G-WJPZ6K1J6K"
+  apiKey: "AIzaSyDPa37-e-Cn3_uKfibpfRFNerAJ7fD0i2Q",
+  authDomain: "bang-biet-on.firebaseapp.com",
+  projectId: "bang-biet-on",
+  storageBucket: "bang-biet-on.firebasestorage.app",
+  messagingSenderId: "713568812269",
+  appId: "1:713568812269:web:5d4f097ed2b6361739a0e4",
+  measurementId: "G-ZCBLGR3H5E" // có nếu bật Analytics
 };
