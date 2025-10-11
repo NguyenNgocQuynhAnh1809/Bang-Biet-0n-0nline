@@ -20,29 +20,25 @@ body.bg{
   body.bg{ background-attachment: scroll; }
 }
 
-/* Căn giữa tiêu đề hỏi cảm xúc */
+/* Căn giữa tiêu đề */
 .panel-title{
-  display:flex;
-  align-items:center;
-  justify-content:center; /* đưa tiêu đề vào giữa */
-  text-align:center;
-  width:100%;
+  display:flex; align-items:center; justify-content:center; text-align:center; width:100%;
 }
 
-/* Căn giữa 4 nút hình cảm xúc */
+/* Căn giữa 4 nút + đảm bảo nằm TRÊN nút Gửi (z-index) */
 .mood-list{
-  display:flex;
-  justify-content:center; /* đưa các nút vào giữa */
-  gap:16px;
-  overflow:visible;
-  padding:8px 0 12px;
+  display:flex; justify-content:center; gap:16px; padding:8px 0 12px;
+  position:relative; z-index:2;   /* nằm trên */
+  margin-bottom: 8px;             /* tạo khoảng cách với nút Gửi */
 }
 
-/* Nếu đang dùng ảnh PNG tách nền cho icon, bỏ nền/khung */
+/* Nút cảm xúc dùng ảnh PNG tách nền: không nền/khung, click vào được */
 .mood-btn{
   background:transparent !important;
   border:0 !important;
   padding:6px 8px;
+  cursor:pointer;
+  position:relative; z-index:2;   /* chắc chắn nổi hơn */
 }
 .mood-btn .face{
   width:64px; height:64px;
@@ -52,29 +48,22 @@ body.bg{
   display:grid; place-items:center;
 }
 .mood-btn .face img{
-  width:64px; height:64px;
-  object-fit:contain; display:block;
-  border-radius:0; /* ảnh PNG tách nền thì không cần bo tròn */
+  width:64px; height:64px; object-fit:contain; display:block;
+  border-radius:0;
+  pointer-events:none; /* click xuyên img để vào button */
 }
-.mood-btn.active .face{ outline:none !important; } /* bỏ khung đen khi chọn */
+/* Khi chọn không viền đen */
+.mood-btn.active .face{ outline:none !important; }
 
-/* Nút "Gửi và xem bảng" trong suốt màu xám */
+/* Nút Gửi trong suốt xám, không đè lên hàng icon */
 .primary-btn{
-  margin-top:12px; width:100%;
-  padding:12px 16px;
-  font-weight:700;
-  background:transparent;                /* trong suốt */
-  color:#6b7280;                         /* xám */
-  border:2px solid rgba(107,114,128,.6); /* viền xám nhạt */
-  border-radius:12px;
-  box-shadow:none;
+  margin-top:12px; width:100%; padding:12px 16px; font-weight:700;
+  background:transparent; color:#6b7280;
+  border:2px solid rgba(107,114,128,.6); border-radius:12px; box-shadow:none;
+  position:relative; z-index:1; /* thấp hơn mood-list để không đè */
 }
-.primary-btn:not(:disabled):hover{
-  background:rgba(107,114,128,.08);
-}
-.primary-btn:disabled{
-  opacity:.55; cursor:not-allowed;
-}
+.primary-btn:not(:disabled):hover{ background:rgba(107,114,128,.08); }
+.primary-btn:disabled{ opacity:.55; cursor:not-allowed; }
 
 /* Top bar */
 .topbar{height:56px; display:grid; grid-template-columns:56px 1fr 56px; align-items:center; padding:0 8px}
