@@ -61,6 +61,7 @@ submitBtn.addEventListener('click', async () => {
   submitBtn.textContent = 'Đang gửi...';
 
   try {
+    // Limit: 1 submission per day
     const already = await hasSubmittedToday(clientId, dateKey);
     if (already) {
       alert('Bạn đã gửi lời biết ơn hôm nay rồi. Hẹn bạn ngày mai nhé!');
