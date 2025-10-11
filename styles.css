@@ -125,3 +125,20 @@ body.bg{
 
 /* Accessibility */
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}
+
+/* Hiệu ứng chọn: ảnh phóng to nhẹ + nhãn đậm hơn */
+.mood-btn .face img{
+  transition: transform .12s ease, filter .15s ease;
+}
+.mood-btn.active .face img{
+  transform: scale(1.08);
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,.18));
+}
+
+.mood-btn .label{
+  transition: color .12s ease, font-weight .12s ease;
+}
+.mood-btn.active .label{
+  color:#111;
+  font-weight:700;
+}
