@@ -68,7 +68,9 @@ function renderGrid(items){
 
 listenGratitudes((items) => {
   const stats = { bad:0, notgreat:0, okay:0, good:0, great:0 };
-  for (const it of items) if (stats[it.emotionKey] !== undefined) stats[it.emotionKey++;
+  for (const it of items) {
+    if (stats[it.emotionKey] !== undefined) stats[it.emotionKey]++;
+  }
   renderLegend(stats);
   renderBar(stats, items.length);
   renderGrid(items);
