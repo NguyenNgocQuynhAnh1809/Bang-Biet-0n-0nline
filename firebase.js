@@ -2,22 +2,20 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js';
 import {
   getFirestore, collection, doc, setDoc, getDoc,
-  addDoc, serverTimestamp, onSnapshot, query, orderBy, limit
+  serverTimestamp, onSnapshot, query, orderBy, limit
 } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
 
-// Import user-provided config (create firebase-config.js from sample)
 import { firebaseConfig } from './firebase-config.js';
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Emotion model (one source of truth)
+// Chỉ còn 4 cảm xúc, dùng ảnh PNG bạn cung cấp
 export const EMOTIONS = {
-  bad:      { label:'Bad',       icon:'😠', color:'var(--bad)', score:1 },
-  notgreat: { label:'Not Great', icon:'😕', color:'var(--notgreat)', score:2 },
-  okay:     { label:'Okay',      icon:'😐', color:'var(--okay)', score:3 },
-  good:     { label:'Good',      icon:'🙂', color:'var(--good)', score:4 },
-  great:    { label:'Great',     icon:'😄', color:'var(--great)', score:5 },
+  notgreat: { label:'Not Great', img:'./notgreat.png', color:'var(--notgreat)', score:1 },
+  okay:     { label:'Okay',      img:'./okay.png',     color:'var(--okay)',     score:2 },
+  good:     { label:'Good',      img:'./good.png',     color:'var(--good)',     score:3 },
+  great:    { label:'Great',     img:'./great.png',    color:'var(--great)',    score:4 },
 };
 
 // Vietnam local date key (YYYY-MM-DD) for daily limit
@@ -29,7 +27,6 @@ export function getDateKey(tz='Asia/Ho_Chi_Minh'){
   return `${y}-${m}-${day}`;
 }
 
-// Check if the client has submitted today
 export async function hasSubmittedToday(clientId, dateKey=getDateKey()){
   const docId = `${clientId}_${dateKey}`;
   const ref = doc(db, 'gratitudes', docId);
@@ -37,8 +34,6 @@ export async function hasSubmittedToday(clientId, dateKey=getDateKey()){
   return snap.exists();
 }
 
-// Write an entry (one per client/day)
-// Uses deterministic docId so rules can enforce uniqueness
 export async function addGratitude({ text, emotionKey, emotionLabel, color, moodScore, clientId, dateKey }) {
   const clean = text.replace(/\s+/g,' ').trim().slice(0, 240);
   if (!clean) throw new Error('Empty text');
@@ -52,12 +47,10 @@ export async function addGratitude({ text, emotionKey, emotionLabel, color, mood
   };
 
   const docId = `${payload.clientId}_${payload.dateKey}`;
-  // setDoc on a non-existing path counts as "create" (rules allow), on existing path counts as "update" (rules deny).
   await setDoc(doc(db, 'gratitudes', docId), payload);
   return docId;
 }
 
-// Listen to latest entries (real-time)
 export function listenGratitudes(callback){
   const qy = query(collection(db, 'gratitudes'), orderBy('createdAt','desc'), limit(300));
   return onSnapshot(qy, (snap) => {
@@ -68,8 +61,8 @@ export function listenGratitudes(callback){
         text: data.text || '',
         emotionKey: data.emotionKey || '',
         emotionLabel: data.emotionLabel || '',
-        color: data.color || '#eee',
-        createdAt: (data.createdAt && data.createdAt.toMillis) ? data.createdAt.toMillis() : Date.now(),
+        color: data.color || '',
+        createdAt: data.createdAt?.toMillis ? data.createdAt.toMillis() : Date.now(),
       };
     });
     callback(items);
