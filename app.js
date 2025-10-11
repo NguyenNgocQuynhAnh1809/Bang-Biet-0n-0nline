@@ -6,14 +6,24 @@ const textEl = document.getElementById('gratitude');
 
 let chosenKey = null;
 
-// Build mood buttons
+// Build mood buttons (4 ảnh)
 for (const key of Object.keys(EMOTIONS)) {
   const m = EMOTIONS[key];
   const btn = document.createElement('button');
   btn.className = 'mood-btn';
   btn.dataset.key = key;
   btn.type = 'button';
-  btn.innerHTML = `<div class="face">${m.icon}</div><div class="label">${m.label}</div>`;
+
+  if (m.img) {
+    btn.classList.add('has-img');
+    btn.innerHTML = `
+      <div class="face"><img src="${m.img}" alt="${m.label}" loading="lazy"></div>
+      <div class="label">${m.label}</div>
+    `;
+  } else {
+    btn.innerHTML = `<div class="face">${m.icon || ''}</div><div class="label">${m.label}</div>`;
+  }
+
   btn.addEventListener('click', () => {
     chosenKey = key;
     for (const b of moodListEl.querySelectorAll('.mood-btn')) b.classList.toggle('active', b === btn);
@@ -51,7 +61,6 @@ submitBtn.addEventListener('click', async () => {
   submitBtn.textContent = 'Đang gửi...';
 
   try {
-    // Limit: 1 submission per day
     const already = await hasSubmittedToday(clientId, dateKey);
     if (already) {
       alert('Bạn đã gửi lời biết ơn hôm nay rồi. Hẹn bạn ngày mai nhé!');
