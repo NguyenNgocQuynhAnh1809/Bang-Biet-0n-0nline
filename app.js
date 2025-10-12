@@ -1,47 +1,55 @@
-import { addGratitude, EMOTIONS, hasSubmittedToday, getDateKey } from './firebase.js';
+import {
+  addGratitude,
+  EMOTIONS,
+  hasSubmittedToday,
+  getDateKey,
+} from "./firebase.js";
 
-const moodListEl = document.getElementById('moodList');
-const submitBtn = document.getElementById('submitBtn');
-const textEl = document.getElementById('gratitude');
+const moodListEl = document.getElementById("moodList");
+const submitBtn = document.getElementById("submitBtn");
+const textEl = document.getElementById("gratitude");
 
 let chosenKey = null;
 
 // Build mood buttons (4 ảnh)
 for (const key of Object.keys(EMOTIONS)) {
   const m = EMOTIONS[key];
-  const btn = document.createElement('button');
-  btn.className = 'mood-btn';
+  const btn = document.createElement("button");
+  btn.className = "mood-btn";
   btn.dataset.key = key;
-  btn.type = 'button';
+  btn.type = "button";
 
   if (m.img) {
-    btn.classList.add('has-img');
+    btn.classList.add("has-img");
     btn.innerHTML = `
       <div class="face"><img src="${m.img}" alt="${m.label}" loading="lazy"></div>
       <div class="label">${m.label}</div>
     `;
   } else {
-    btn.innerHTML = `<div class="face">${m.icon || ''}</div><div class="label">${m.label}</div>`;
+    btn.innerHTML = `<div class="face">${
+      m.icon || ""
+    }</div><div class="label">${m.label}</div>`;
   }
 
-  btn.addEventListener('click', () => {
+  btn.addEventListener("click", () => {
     chosenKey = key;
-    for (const b of moodListEl.querySelectorAll('.mood-btn')) b.classList.toggle('active', b === btn);
+    for (const b of moodListEl.querySelectorAll(".mood-btn"))
+      b.classList.toggle("active", b === btn);
     updateSubmitState();
   });
   moodListEl.appendChild(btn);
 }
 
-textEl.addEventListener('input', updateSubmitState);
+textEl.addEventListener("input", updateSubmitState);
 
 function updateSubmitState() {
-  const valid = (textEl.value.trim().length > 0) && !!chosenKey;
+  const valid = textEl.value.trim().length > 0 && !!chosenKey;
   submitBtn.disabled = !valid;
 }
 
 // Anonymous client id (local)
 function getClientId() {
-  const key = 'gratitude_client_id';
+  const key = "gratitude_client_id";
   let id = localStorage.getItem(key);
   if (!id) {
     id = crypto.randomUUID?.() || String(Math.random()).slice(2);
@@ -50,7 +58,7 @@ function getClientId() {
   return id;
 }
 
-submitBtn.addEventListener('click', async () => {
+submitBtn.addEventListener("click", async () => {
   const text = textEl.value.trim();
   if (!text || !chosenKey) return;
 
@@ -58,15 +66,15 @@ submitBtn.addEventListener('click', async () => {
   const dateKey = getDateKey(); // Asia/Ho_Chi_Minh
 
   submitBtn.disabled = true;
-  submitBtn.textContent = 'Đang gửi...';
+  submitBtn.textContent = "Đang gửi...";
 
   try {
     // Limit: 1 submission per day
     const already = await hasSubmittedToday(clientId, dateKey);
     if (already) {
-      alert('Bạn đã gửi lời biết ơn hôm nay rồi. Hẹn bạn ngày mai nhé!');
+      alert("Bạn đã gửi lời biết ơn hôm nay rồi. Hẹn bạn ngày mai nhé!");
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Gửi và xem bảng';
+      submitBtn.textContent = "Gửi và xem bảng";
       return;
     }
 
@@ -78,23 +86,80 @@ submitBtn.addEventListener('click', async () => {
       color: m.color,
       moodScore: m.score,
       clientId,
-      dateKey
+      dateKey,
     });
-    window.location.href = './board.html';
+    window.location.href = "./board.html";
   } catch (e) {
     console.error(e);
-    alert('Gửi thất bại. Vui lòng thử lại.');
+    alert("Gửi thất bại. Vui lòng thử lại.");
   } finally {
     submitBtn.disabled = false;
-    submitBtn.textContent = 'Gửi và xem bảng';
+    submitBtn.textContent = "Gửi và xem bảng";
   }
 });
 
 // Share
-document.getElementById('shareBtn')?.addEventListener('click', async () => {
-  const url = location.origin + location.pathname.replace(/index\.html?$/, '');
+// Menu + share + view board
+const menuBtn = document.getElementById("menuBtn");
+const menuPopover = document.getElementById("menuPopover");
+const menuShareBtn = document.getElementById("menuShareBtn");
+const viewBoardBtn = document.getElementById("viewBoardBtn");
+
+function toggleMenu(show) {
+  const is =
+    typeof show === "boolean"
+      ? show
+      : menuPopover.getAttribute("aria-hidden") === "true";
+  menuPopover.setAttribute("aria-hidden", String(!is));
+}
+
+menuBtn?.addEventListener("click", (e) => {
+  e.stopPropagation();
+  const hidden = menuPopover.getAttribute("aria-hidden") === "true";
+  menuPopover.setAttribute("aria-hidden", hidden ? "false" : "true");
+});
+
+// close menu when clicking outside
+document.addEventListener("click", (e) => {
+  if (!menuPopover) return;
+  if (menuPopover.getAttribute("aria-hidden") === "true") return;
+  if (!menuPopover.contains(e.target) && e.target !== menuBtn) {
+    menuPopover.setAttribute("aria-hidden", "true");
+  }
+});
+
+menuShareBtn?.addEventListener("click", async () => {
+  const url = location.origin + location.pathname.replace(/index\.html?$/, "");
   try {
-    if (navigator.share) await navigator.share({ title: 'Bảng biết ơn', text: 'Gửi lời biết ơn hôm nay 🧡', url });
-    else await navigator.clipboard.writeText(url), alert('Đã sao chép liên kết.');
+    if (navigator.share)
+      await navigator.share({
+        title: "Bảng biết ơn",
+        text: "Gửi lời biết ơn hôm nay 🧡",
+        url,
+      });
+    else
+      await navigator.clipboard.writeText(url), alert("Đã sao chép liên kết.");
   } catch {}
+  menuPopover?.setAttribute("aria-hidden", "true");
+});
+
+// Xem bảng biết ơn: chỉ cho phép nếu đã gửi lời biết ơn hôm nay
+viewBoardBtn?.addEventListener("click", async () => {
+  const clientId = getClientId();
+  const dateKey = getDateKey();
+  try {
+    const already = await hasSubmittedToday(clientId, dateKey);
+    if (already) {
+      window.location.href = "./board.html";
+    } else {
+      alert(
+        "Bạn chưa gửi lời biết ơn hôm nay. Vui lòng viết trước khi xem bảng."
+      );
+    }
+  } catch (e) {
+    console.error(e);
+    alert("Không thể kiểm tra trạng thái gửi. Vui lòng thử lại.");
+  } finally {
+    menuPopover?.setAttribute("aria-hidden", "true");
+  }
 });

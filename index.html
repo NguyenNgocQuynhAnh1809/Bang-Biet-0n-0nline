@@ -1,42 +1,78 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BẢNG BIẾT ƠN - Gửi lời hôm nay</title>
-  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://www.googleapis.com" crossorigin>
-  <link rel="stylesheet" href="./styles.css" />
-</head>
-<body class="bg">
-  <header class="topbar">
-    <button class="icon-btn" id="closeBtn" aria-label="Đóng">✕</button>
-    <h1 class="title">BẢNG BIẾT ƠN</h1>
-    <button class="icon-btn" id="shareBtn" aria-label="Chia sẻ">⤴</button>
-  </header>
-
-  <main class="container">
-    <section class="card">
-      <div class="polaroid">
-        <div class="artwork">
-          <img src="./hero.jpg" alt="Hình cảm ơn dễ thương" loading="lazy" />
-        </div>
-        <label class="gratitude-input-wrapper" for="gratitude">
-          <textarea id="gratitude" class="gratitude-input" rows="2" maxlength="240" placeholder="Viết lời biết ơn hôm nay..."></textarea>
-        </label>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BẢNG BIẾT ƠN - Gửi lời hôm nay</title>
+    <link rel="preconnect" href="https://www.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://www.googleapis.com" crossorigin />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body class="bg">
+    <header class="topbar" role="banner">
+      <button
+        class="icon-btn"
+        id="menuBtn"
+        aria-label="Mở menu"
+        title="Mở menu"
+      >
+        ☰
+      </button>
+      <div class="topbar-center">
+        <h1 class="title">BẢNG BIẾT ƠN</h1>
+        <div class="subtitle">Gửi lời biết ơn hôm nay</div>
       </div>
-    </section>
+      <!-- menu popover: chứa các hành động như Chia sẻ và Xem bảng -->
+      <div id="menuPopover" class="menu-popover" aria-hidden="true">
+        <button
+          class="menu-item"
+          id="menuShareBtn"
+          type="button"
+          aria-label="Chia sẻ liên kết"
+        >
+          ⤴ Chia sẻ
+        </button>
+        <button
+          class="menu-item"
+          id="viewBoardBtn"
+          type="button"
+          aria-label="Xem bảng biết ơn"
+        >
+          🗂️ Xem bảng biết ơn
+        </button>
+      </div>
+    </header>
 
-    <section class="panel">
-      <h2 class="panel-title">
-        Hôm nay bạn thấy thế nào?
-      </h2>
-      <div class="mood-list" id="moodList" role="group" aria-label="Chọn cảm xúc"></div>
-      <button id="submitBtn" class="primary-btn" disabled>GỬI</button>
-    </section>
-  </main>
+    <main class="container">
+      <section class="card">
+        <div class="polaroid">
+          <div class="artwork">
+            <img src="./hero.jpg" alt="Hình cảm ơn dễ thương" loading="lazy" />
+          </div>
+          <label class="gratitude-input-wrapper" for="gratitude">
+            <textarea
+              id="gratitude"
+              class="gratitude-input"
+              rows="2"
+              maxlength="240"
+              placeholder="Viết lời biết ơn hôm nay..."
+            ></textarea>
+          </label>
+        </div>
+      </section>
 
-  <script type="module" src="./app.js"></script>
-</body>
+      <section class="panel">
+        <h2 class="panel-title">Hôm nay bạn thấy thế nào?</h2>
+        <div
+          class="mood-list"
+          id="moodList"
+          role="group"
+          aria-label="Chọn cảm xúc"
+        ></div>
+        <button id="submitBtn" class="primary-btn" disabled>GỬI</button>
+      </section>
+    </main>
+
+    <script type="module" src="./app.js"></script>
+  </body>
 </html>
-

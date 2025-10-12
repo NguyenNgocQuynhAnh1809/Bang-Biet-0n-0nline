@@ -1,33 +1,33 @@
-import { listenGratitudes, EMOTIONS } from './firebase.js';
+import { listenGratitudes, EMOTIONS } from "./firebase.js";
 
-const gridEl = document.getElementById('grid');
-const legendEl = document.getElementById('legend');
-const barEl = document.getElementById('bar');
-const totalEl = document.getElementById('total');
+const gridEl = document.getElementById("grid");
+const legendEl = document.getElementById("legend");
+const barEl = document.getElementById("bar");
+const totalEl = document.getElementById("total");
 
 // Chỉ còn 4 cảm xúc
-const orderKeys = ['notgreat','okay','good','great'];
+const orderKeys = ["notgreat", "okay", "good", "great"];
 
-function renderLegend(stats){
-  legendEl.innerHTML = '';
+function renderLegend(stats) {
+  legendEl.innerHTML = "";
   for (const key of orderKeys) {
     const emo = EMOTIONS[key];
     const count = stats[key] || 0;
-    const chip = document.createElement('div');
-    chip.className = 'chip';
+    const chip = document.createElement("div");
+    chip.className = "chip";
     chip.innerHTML = `<span class="dot" style="background:${emo.color}"></span>${emo.label}: <strong>${count}</strong>`;
     legendEl.appendChild(chip);
   }
 }
 
-function renderBar(stats, total){
-  barEl.innerHTML = '';
+function renderBar(stats, total) {
+  barEl.innerHTML = "";
   for (const key of orderKeys) {
     const emo = EMOTIONS[key];
     const count = stats[key] || 0;
-    const pct = total ? (count/total*100) : 0;
-    const seg = document.createElement('div');
-    seg.className = 'seg';
+    const pct = total ? (count / total) * 100 : 0;
+    const seg = document.createElement("div");
+    seg.className = "seg";
     seg.style.cssText = `width:${pct}%; background:${emo.color}`;
     seg.title = `${emo.label} ${Math.round(pct)}% (${count})`;
     barEl.appendChild(seg);
@@ -35,44 +35,79 @@ function renderBar(stats, total){
   totalEl.textContent = `Tổng: ${total} mục`;
 }
 
-function timeAgo(ts){
-  const t = typeof ts === 'number' ? ts : +ts;
-  const s = Math.floor((Date.now() - t)/1000);
-  if (s<60) return `${s}s trước`;
-  const m = Math.floor(s/60); if (m<60) return `${m}p trước`;
-  const h = Math.floor(m/60); if (h<24) return `${h}g trước`;
-  const d = Math.floor(h/24); return `${d} ngày trước`;
+function timeAgo(ts) {
+  const t = typeof ts === "number" ? ts : +ts;
+  const s = Math.floor((Date.now() - t) / 1000);
+  if (s < 60) return `${s}s trước`;
+  const m = Math.floor(s / 60);
+  if (m < 60) return `${m}p trước`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}g trước`;
+  const d = Math.floor(h / 24);
+  return `${d} ngày trước`;
 }
 
-function renderGrid(items){
-  gridEl.innerHTML = '';
+function renderGrid(items) {
+  gridEl.innerHTML = "";
   for (const it of items) {
-    const div = document.createElement('article');
-    div.className = 'note';
-    div.style.borderLeftColor = it.color || '#ddd';
+    const div = document.createElement("article");
+    div.className = "note";
+    // Add emotion class so CSS controls translucent background
+    if (it.emotionKey) div.classList.add("emo-" + it.emotionKey);
+
+    // mascot img if available (use EMOTIONS map)
+    // watermark mascot centered
+    const watermarkHtml =
+      it.emotionKey && EMOTIONS[it.emotionKey] && EMOTIONS[it.emotionKey].img
+        ? `<div class="mascot-watermark"><img src="${
+            EMOTIONS[it.emotionKey].img
+          }" alt="" loading="lazy" /></div>`
+        : "";
+
     div.innerHTML = `
+      ${watermarkHtml}
       <div class="text"></div>
       <div class="meta">
-        <span class="badge" style="background: color-mix(in srgb, ${it.color||'#eee'} 20%, #fff)">
-          <span style="width:8px;height:8px;border-radius:50%;background:${it.color};display:inline-block"></span>
-          ${it.emotionLabel || ''}
+        <span class="badge">
+          <span style="width:8px;height:8px;border-radius:50%;background:${
+            it.color || "#eee"
+          };display:inline-block"></span>
+          ${it.emotionLabel || ""}
         </span>
         <span aria-hidden="true">•</span>
         <span>${timeAgo(it.createdAt || Date.now())}</span>
       </div>
     `;
-    div.querySelector('.text').textContent = it.text;
+    div.querySelector(".text").textContent = it.text;
+    // ensure readable text: for light-ish color vars we use dark ink
+    div.style.color = "var(--ink)";
     gridEl.appendChild(div);
   }
-  gridEl.setAttribute('aria-busy','false');
+  gridEl.setAttribute("aria-busy", "false");
 }
 
 listenGratitudes((items) => {
-  const stats = { notgreat:0, okay:0, good:0, great:0 };
+  const stats = { notgreat: 0, okay: 0, good: 0, great: 0 };
   for (const it of items) {
     if (stats[it.emotionKey] !== undefined) stats[it.emotionKey]++;
   }
   renderLegend(stats);
   renderBar(stats, items.length);
   renderGrid(items);
+});
+
+// Ensure Facebook icon opens the link (defensive handler)
+document.querySelectorAll('a[aria-label="Facebook cá nhân"]').forEach((a) => {
+  a.addEventListener("click", (e) => {
+    // default anchor should work; this ensures a new tab opens safely
+    const href = a.getAttribute("href");
+    if (href) {
+      // let the browser handle target=_blank; if prevented, open via window.open
+      setTimeout(() => {
+        try {
+          window.open(href, "_blank", "noopener");
+        } catch {}
+      }, 10);
+    }
+  });
 });
