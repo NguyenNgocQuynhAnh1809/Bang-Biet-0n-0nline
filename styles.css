@@ -1,3 +1,27 @@
+/* Artwork image switching */
+.artwork-img {
+  opacity: 0;
+  transform: scale(0.98);
+  pointer-events: none;
+  width: 100%;
+  height: auto;
+  transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 0;
+}
+.artwork-img.active {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+  z-index: 1;
+}
+.artwork {
+  position: relative;
+  min-height: 180px;
+}
 :root {
   --bg1: #fde68a;
   --bg2: #fef3c7;

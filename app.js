@@ -11,6 +11,19 @@ const textEl = document.getElementById("gratitude");
 
 let chosenKey = null;
 
+// Preload GIFs for better performance
+const GIFS = [
+  "./not_great_gif.gif",
+  "./good_gif.gif",
+  "./great_gif.gif",
+  "./okay_gif.gif",
+  "./hero.jpg",
+];
+GIFS.forEach((src) => {
+  const img = new window.Image();
+  img.src = src;
+});
+
 // Build mood buttons (4 ảnh)
 for (const key of Object.keys(EMOTIONS)) {
   const m = EMOTIONS[key];
@@ -35,28 +48,31 @@ for (const key of Object.keys(EMOTIONS)) {
     chosenKey = key;
     for (const b of moodListEl.querySelectorAll(".mood-btn"))
       b.classList.toggle("active", b === btn);
-    // Đổi ảnh artwork theo cảm xúc
-    const artworkImg = document.getElementById("artworkImg");
-    if (artworkImg) {
-      let gifSrc = "./hero.jpg";
-      switch (key) {
-        case "notgreat":
-          gifSrc = "./not_great_gif.gif";
-          break;
-        case "good":
-          gifSrc = "./good_gif.gif";
-          break;
-        case "great":
-          gifSrc = "./great_gif.gif";
-          break;
-        case "okay":
-          gifSrc = "./okay_gif.gif";
-          break;
-        default:
-          gifSrc = "./hero.jpg";
-      }
-      artworkImg.src = gifSrc;
+    // Chuyển đổi hiển thị ảnh artwork
+    const artworkImgs = ["hero", "notgreat", "good", "great", "okay"];
+    artworkImgs.forEach((k) => {
+      const img = document.getElementById(`artworkImg-${k}`);
+      if (img) img.classList.remove("active");
+    });
+    let showKey = "hero";
+    switch (key) {
+      case "notgreat":
+        showKey = "notgreat";
+        break;
+      case "good":
+        showKey = "good";
+        break;
+      case "great":
+        showKey = "great";
+        break;
+      case "okay":
+        showKey = "okay";
+        break;
+      default:
+        showKey = "hero";
     }
+    const showImg = document.getElementById(`artworkImg-${showKey}`);
+    if (showImg) showImg.classList.add("active");
     updateSubmitState();
   });
   moodListEl.appendChild(btn);
