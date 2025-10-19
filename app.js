@@ -707,6 +707,13 @@ submitBtn.addEventListener("click", async () => {
   const text = textEl.value.trim();
   if (!text || !chosenKey) return;
 
+  if (containsBadWords(text)) {
+    alert(
+      "Nội dung chứa từ ngữ không phù hợp. Vui lòng sửa lại trước khi gửi!"
+    );
+    return;
+  }
+
   const clientId = getClientId();
   const dateKey = getDateKey(); // Asia/Ho_Chi_Minh
 
