@@ -35,6 +35,28 @@ for (const key of Object.keys(EMOTIONS)) {
     chosenKey = key;
     for (const b of moodListEl.querySelectorAll(".mood-btn"))
       b.classList.toggle("active", b === btn);
+    // Đổi ảnh artwork theo cảm xúc
+    const artworkImg = document.getElementById("artworkImg");
+    if (artworkImg) {
+      let gifSrc = "./hero.jpg";
+      switch (key) {
+        case "notgreat":
+          gifSrc = "./not_great_gif.gif";
+          break;
+        case "good":
+          gifSrc = "./good_gif.gif";
+          break;
+        case "great":
+          gifSrc = "./great_gif.gif";
+          break;
+        case "okay":
+          gifSrc = "./okay_gif.gif";
+          break;
+        default:
+          gifSrc = "./hero.jpg";
+      }
+      artworkImg.src = gifSrc;
+    }
     updateSubmitState();
   });
   moodListEl.appendChild(btn);
@@ -115,7 +137,7 @@ const BAD_WORDS = [
   "đụ*",
   "đuỵt*",
   "chó",
-  "cho",
+  "dmm",
   "cho*",
   "ch0",
   "ch0*",
