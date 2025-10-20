@@ -744,8 +744,8 @@ font-weight: 700;
 
 .reaction-icons {
   display: flex;
-  gap: 2px;
-  padding-left: 10px;
+  gap: 0;
+  padding-left: 8px;
 }
 
 .react-btn {
@@ -787,7 +787,7 @@ font-weight: 700;
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .comment-avatar {
@@ -817,22 +817,9 @@ font-weight: 700;
   border-radius: 18px;
   font-size: 0.95em;
   box-shadow: none;
-}
-
-.comment-reaction {
-    position: absolute;
-    right: 4px;
-    bottom: -8px;
-    background: #fff;
-    border-radius: 50%;
-    padding: 2px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    display: grid;
-    place-items: center;
-}
-.comment-reaction img {
-    width: 18px;
-    height: 18px;
+  display: inline-block;
+  max-width: 100%;
+  word-break: break-word;
 }
 
 /* Chân của khu vực bình luận */
@@ -859,13 +846,17 @@ font-weight: 700;
     display: flex;
     align-items: center;
     cursor: pointer;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 50%;
+    padding: 1px;
 }
 .reaction-count-item img {
     width: 20px;
     height: 20px;
 }
 .reaction-count-item:not(:first-child) {
-    margin-left: -8px; /* Icon chồng lên nhau */
+    margin-left: -10px; /* Icon chồng lên nhau */
 }
 
 .summary-count {
