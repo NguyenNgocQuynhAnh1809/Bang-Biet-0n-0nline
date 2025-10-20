@@ -1,5 +1,9 @@
 # Bảng biết ơn online (2 màn hình)
-
+Tác giả
+- Quỳnh Anh - Digital Marketing (code)
+- Minh Thịnh - Software Engineering (code,fix)
+- Thảo Vi - Digital Marketing (idea)
+  
 Mục tiêu
 - Màn hình 1: Nhập lời biết ơn ở vùng giống dòng chữ trên ảnh; chọn cảm xúc (Bad → Great).
 - Màn hình 2: Tổng hợp theo màu cảm xúc và hiển thị các lời biết ơn ẩn danh, realtime.
