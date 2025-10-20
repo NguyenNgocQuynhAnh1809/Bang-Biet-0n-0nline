@@ -206,19 +206,26 @@ listenGratitudes((items) => {
   window.gratitudeItems = items;
 
   const stats = { notgreat: 0, okay: 0, good: 0, great: 0 };
-  for (const it of items) {
-    if (stats[it.emotionKey] !== undefined) stats[it.emotionKey]++;
-  }
+  // Dùng forEach an toàn hơn
+  items.forEach(it => {
+    if (it && it.emotionKey && stats.hasOwnProperty(it.emotionKey)) {
+      stats[it.emotionKey]++;
+    }
+  });
+
   renderLegend(stats);
   renderBar(stats, items.length);
   renderGrid(items);
 
-  // Nếu modal đang mở, cập nhật nó với dữ liệu mới
+  // Cập nhật modal nếu nó đang mở
   if (currentItem) {
-      const updatedItem = items.find(it => it.id === currentItem.id);
+      const updatedItem = items.find(it => it && it.id === currentItem.id);
       if (updatedItem) {
-          renderComments(updatedItem);
-          currentItem = updatedItem; // Cập nhật state
+          currentItem = updatedItem; // Cập nhật state của item hiện tại
+          renderComments(updatedItem); // Vẽ lại comment với dữ liệu mới
+      } else {
+          // Nếu item không còn tồn tại (ví dụ: bị xóa), đóng modal lại
+          closeCommentModal();
       }
   }
 });
