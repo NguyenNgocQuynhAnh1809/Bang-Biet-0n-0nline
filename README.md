@@ -1,4 +1,4 @@
-# Bảng biết ơn online (2 màn hình)
+# Bảng biết ơn online
 Tác giả
 - Quỳnh Anh - Digital Marketing (code)
 - Minh Thịnh - Software Engineering (code,fix)
@@ -20,12 +20,3 @@ Mục tiêu
   - Hoặc Python: `python -m http.server 8000` → mở http://localhost:8000
   - Hoặc VS Code “Live Server”.
 - Trang vào: `index.html` → nhập lời biết ơn → chọn cảm xúc → Gửi → chuyển `board.html`.
-
-## Deploy GitHub Pages
-- Repo Settings → Pages → Deploy from a branch → Branch: `main` / `root` → Save.
-- URL dự kiến: `https://nguyenngocquynhanh1809.github.io/Bang-Biet-0n-0nline/`
-
-## Kỹ thuật
-- Cache offline: `persistentLocalCache` (IndexedDB) giúp tải nhanh.
-- Truy vấn: `orderBy(createdAt) + limit(300)` để nhẹ.
-- Bảo mật: chỉ `create`, không `update/delete`, 1 lần/ngày qua `docId = clientId_dateKey`.
