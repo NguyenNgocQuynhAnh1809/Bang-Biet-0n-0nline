@@ -58,7 +58,6 @@ body {
 }
 body.bg {
   min-height: 100svh;
-  /* SỬA Ở ĐÂY: Bỏ "./" trong url() nếu cần, hoặc dùng đường dẫn tuyệt đối cho Github Pages */
   background: linear-gradient(
       rgba(255, 255, 255, 0.6),
       rgba(255, 255, 255, 0.6)
@@ -69,14 +68,12 @@ body.bg {
     Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
 }
 
-/* Tránh giật trên mobile (tùy chọn): nếu muốn cố định ảnh, thêm background-attachment: fixed; */
 @media (max-width: 768px) {
   body.bg {
     background-attachment: scroll;
   }
 }
 
-/* Căn giữa tiêu đề */
 .panel-title {
   display: flex;
   align-items: center;
@@ -85,25 +82,23 @@ body.bg {
   width: 100%;
 }
 
-/* Căn giữa 4 nút + đảm bảo nằm TRÊN nút Gửi (z-index) */
 .mood-list {
   display: flex;
   justify-content: center;
   gap: 16px;
   padding: 8px 0 12px;
   position: relative;
-  z-index: 2; /* nằm trên */
-  margin-bottom: 8px; /* tạo khoảng cách với nút Gửi */
+  z-index: 2;
+  margin-bottom: 8px;
 }
 
-/* Nút cảm xúc dùng ảnh PNG tách nền: không nền/khung, click vào được */
 .mood-btn {
   background: transparent !important;
   border: 0 !important;
   padding: 6px 8px;
   cursor: pointer;
   position: relative;
-  z-index: 2; /* chắc chắn nổi hơn */
+  z-index: 2;
 }
 .mood-btn .face {
   width: 64px;
@@ -120,14 +115,12 @@ body.bg {
   object-fit: contain;
   display: block;
   border-radius: 0;
-  pointer-events: none; /* click xuyên img để vào button */
+  pointer-events: none;
 }
-/* Khi chọn không viền đen */
 .mood-btn.active .face {
   outline: none !important;
 }
 
-/* Nút Gửi trong suốt xám, không đè lên hàng icon */
 .primary-btn {
   margin-top: 12px;
   width: 100%;
@@ -139,7 +132,7 @@ body.bg {
   border-radius: 12px;
   box-shadow: none;
   position: relative;
-  z-index: 1; /* thấp hơn mood-list để không đè */
+  z-index: 1;
 }
 .primary-btn:not(:disabled):hover {
   background: rgba(107, 114, 128, 0.08);
@@ -149,7 +142,6 @@ body.bg {
   cursor: not-allowed;
 }
 
-/* Top bar */
 .topbar {
   height: 64px;
   display: grid;
@@ -168,12 +160,6 @@ body.bg {
   );
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
-.topbar-center {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
 .title {
   margin: 0;
   text-align: center;
@@ -181,11 +167,6 @@ body.bg {
   letter-spacing: 0.6px;
   text-transform: uppercase;
   font-size: 18px;
-}
-.subtitle {
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: 2px;
 }
 .icon-btn {
   appearance: none;
@@ -200,7 +181,7 @@ body.bg {
   display: grid;
   place-items: center;
   color: #333;
-  text-decoration: none; /* remove underline/underline-gaps under emoji */
+  text-decoration: none;
   text-decoration-skip-ink: none;
   -webkit-text-decoration-skip-ink: none;
 }
@@ -208,152 +189,12 @@ body.bg {
   background: rgba(0, 0, 0, 0.06);
 }
 
-/* Menu popover (ẩn mặc định) */
-.menu-popover {
-  position: absolute;
-  left: 12px;
-  top: 64px;
-  min-width: 200px;
-  background: var(--card);
-  border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  padding: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  transform-origin: top left;
-  visibility: hidden;
-  opacity: 0;
-  transform: scale(0.98);
-  transition: opacity 0.12s ease, transform 0.12s ease, visibility 0.12s;
-  z-index: 40;
-}
-.menu-popover[aria-hidden="false"] {
-  visibility: visible;
-  opacity: 1;
-  transform: scale(1);
-}
-.menu-item {
-  appearance: none;
-  border: 0;
-  background: transparent;
-  text-align: left;
-  padding: 8px 10px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  color: var(--ink);
-}
-.menu-item:hover {
-  background: #f3f4f6;
-}
-
-/* Ensure popover doesn't overflow on very small screens */
-@media (max-width: 420px) {
-  .menu-popover {
-    left: 8px;
-    right: 8px;
-    top: 60px;
-    min-width: unset;
-  }
-}
-
-/* Layout */
 .container {
   max-width: 720px;
   margin: 0 auto;
   padding: 8px 16px 32px;
 }
 
-.card {
-  padding: 12px;
-}
-.polaroid {
-  border-radius: 18px;
-  background: var(--card);
-  padding: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-}
-.artwork {
-  position: relative;
-  height: 320px;
-  border-radius: 12px;
-  overflow: hidden;
-  background: radial-gradient(60% 60% at 70% 20%, #fff6 0%, transparent 60%),
-    linear-gradient(180deg, #a7f3d0 0%, #60a5fa 55%, #fff 100%);
-}
-.artwork > img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  border-radius: 12px;
-}
-
-/* Caption area */
-.gratitude-input-wrapper {
-  display: block;
-  margin: 12px 6px 4px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  border: 2px dashed #e5e7eb;
-}
-.gratitude-input {
-  width: 100%;
-  border: 0;
-  outline: 0;
-  resize: none;
-  font-size: 18px;
-  background: transparent;
-}
-.gratitude-input::placeholder {
-  color: #9ca3af;
-}
-
-/* Panel */
-.panel {
-  background: #fff;
-  border-radius: 18px;
-  padding: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  margin-top: 16px;
-}
-.panel-title {
-  margin: 4px 4px 12px;
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.title-icons {
-  font-size: 18px;
-}
-
-/* Nút mood dùng ảnh: bỏ màu nền, dùng ảnh tròn 56x56 */
-.mood-btn.has-img {
-  background: transparent !important;
-}
-.mood-btn.has-img .face {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  display: grid;
-  place-items: center;
-}
-.mood-btn.has-img .face img {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  object-fit: cover;
-  display: block;
-}
-
-/* Board */
 .stats {
   background: #fff;
   border-radius: 18px;
@@ -417,13 +258,12 @@ body.bg {
   overflow: hidden;
   cursor: pointer;
 }
-/* translucent overlay to let page background show through */
 .note::before {
   content: "";
   position: absolute;
   inset: 0;
   background: inherit;
-  opacity: 0.3; /* more translucent so background shows through clearly */
+  opacity: 0.3;
   backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(3px);
   z-index: 0;
@@ -451,51 +291,45 @@ body.bg {
   background: #f9fafb;
 }
 
-/* Mascot (linh vật cảm xúc) shown at top-right of each card */
 .note .mascot-watermark {
   position: absolute;
   left: 0;
   right: 0;
   top: 0;
-  bottom: 0; /* fill the note so sizing is relative to parent */
+  bottom: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   pointer-events: none;
   z-index: 0;
-  opacity: 0.2; /* increase visibility */
-  padding: 2px; /* small inner gap so image doesn't touch corners */
+  opacity: 0.2;
+  padding: 2px;
 }
 .note .mascot-watermark img {
-  width: auto; /* let height control scaling for tall cards */
+  width: auto;
   max-width: 110%;
-  max-height: 95%; /* scale relative to parent height */
+  max-height: 95%;
   height: auto;
   object-fit: contain;
   display: block;
   filter: blur(0.02px);
 }
 
-/* Hover pop for card */
 .note:hover {
   transform: translateY(-6px);
   box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
 }
 
-/* ensure main content sits above watermark */
 .note > * {
   position: relative;
   z-index: 1;
 }
 
-/* adjust badge to be slightly translucent over colored background */
 .note .badge {
   background: rgba(255, 255, 255, 0.85);
 }
 
-/* Per-emotion translucent backgrounds (lower alpha so page bg shows through) */
 .note.emo-notgreat {
-  /* very soft tint so page background shows through clearly */
   background: color-mix(in srgb, var(--notgreat) 40%, #fff 60%);
 }
 .note.emo-okay {
@@ -507,15 +341,7 @@ body.bg {
 .note.emo-great {
   background: color-mix(in srgb, var(--great) 40%, #fff 60%);
 }
-/* utility: make a single Great note slightly darker than others */
-.note.strong-great {
-  background: color-mix(in srgb, var(--great) 70%, #fff 30%) !important;
-}
-.note.strong-great::before {
-  opacity: 0.45 !important; /* slightly less translucent overlay to make card pop */
-}
 
-/* Accessibility */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -523,38 +349,32 @@ body.bg {
   padding: 0;
   margin: -1px;
   overflow: hidden;
-clip: rect(0, 0, 0, 0);
-white-space: nowrap;
-border-width: 0;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 
-/* Hiệu ứng chọn: ảnh phóng to nhẹ + nhãn đậm hơn */
-.mood-btn .face img {
-transition: transform 0.12s ease, filter 0.15s ease;
-}
 .mood-btn.active .face img {
-transform: scale(1.08);
-filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.18));
+  transform: scale(1.08);
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.18));
 }
 
-.mood-btn .label {
-transition: color 0.12s ease, font-weight 0.12s ease;
-}
 .mood-btn.active .label {
-color: #111;
-font-weight: 700;
+  color: #111;
+  font-weight: 700;
 }
 
-/* ===== BẮT ĐẦU KHỐI MÃ CSS CHO MODAL BÌNH LUẬN (THÊM VÀO CUỐI TỆP) ===== */
+/* ===== NEW MODAL CSS ===== */
 
-/* Lớp phủ cho modal */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.6); /* Nền đen mờ */
+  background-color: rgba(30, 30, 30, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -570,32 +390,29 @@ font-weight: 700;
   transition: opacity 0.3s ease;
 }
 
-/* Nội dung chính của modal */
 .comment-modal-content {
-  background-color: #fff;
-  padding: 30px 40px;
+  background-color: #f9f9f7;
+  padding: 24px;
   border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
   width: 90%;
   max-width: 900px;
   position: relative;
   transform: scale(0.95);
   transition: transform 0.3s ease;
-  overflow: visible;
 }
 
 .modal-overlay.show .comment-modal-content {
   transform: scale(1);
 }
 
-/* Nút đóng modal */
 .close-comment-modal {
   position: absolute;
   top: 15px;
   right: 20px;
   font-size: 28px;
   font-weight: bold;
-  color: #888;
+  color: #999;
   cursor: pointer;
   transition: color 0.2s;
   z-index: 20;
@@ -605,36 +422,27 @@ font-weight: 700;
   color: #333;
 }
 
-/* Hình cái ghim (đã bị xóa khỏi HTML) */
-.pin-img {
-  display: none;
-}
-
-/* Layout chính của modal: trái và phải */
 .comment-modal-body {
   display: flex;
-  gap: 30px;
-  flex-wrap: wrap;
+  gap: 24px;
 }
 
 .comment-modal-left {
-  flex: 1;
+  flex: 1.1;
   display: flex;
   flex-direction: column;
-  min-width: 280px;
+  min-width: 300px;
 }
 
 .comment-modal-right {
   flex: 1;
-  border-left: 1px solid #eee;
-  padding-left: 30px;
+  padding-left: 24px;
+  border-left: 1px solid #efedea;
   display: flex;
   flex-direction: column;
-  max-height: 450px; /* Giới hạn chiều cao và cho phép cuộn */
-  min-width: 220px;
+  max-height: 480px;
 }
 
-/* Thẻ chi tiết bên trong modal (phía trái) */
 .gratitude-item-modal {
   padding: 25px;
   border-radius: 15px;
@@ -645,13 +453,12 @@ font-weight: 700;
   position: relative;
   overflow: hidden;
   color: #333;
-  min-height: 250px;
-  border: 6px solid rgba(255, 255, 255, 0.92);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  min-height: 300px;
+  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   background: var(--card);
 }
 
-/* SỬA ĐỔI: Tăng kích thước chữ nội dung */
 .gratitude-item-modal .content {
   flex-grow: 1; 
   display: flex;
@@ -662,16 +469,15 @@ font-weight: 700;
   line-height: 1.6;
   z-index: 2;
   position: relative;
-  font-size: 22px; /* Tăng kích thước chữ */
+  font-size: 22px;
 }
 
-/* SỬA ĐỔI: Căn lề trái và giảm kích thước chữ footer */
 .gratitude-item-modal .footer {
   display: flex;
-  justify-content: flex-start; /* Căn lề trái */
+  justify-content: flex-start;
   align-items: center;
   gap: 8px; 
-  font-size: 0.8em; /* Giảm kích thước chữ */
+  font-size: 0.8em;
   color: var(--muted);
   z-index: 2;
   position: relative;
@@ -689,6 +495,10 @@ font-weight: 700;
   color: var(--ink);
   font-weight: 600;
 }
+/* Remove bold from tag */
+.gratitude-item-modal .footer .tag strong {
+    font-weight: 600;
+}
 
 .gratitude-item-modal .footer .tag .dot {
   width: 8px;
@@ -696,20 +506,10 @@ font-weight: 700;
   border-radius: 50%;
 }
 
-.gratitude-item-modal::before {
-  content: none;
-}
-
 .gratitude-item-modal::after {
   content: "";
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  left: 0; right: 0; top: 0; bottom: 0;
   pointer-events: none;
   z-index: 0;
   opacity: 0;
@@ -724,26 +524,25 @@ font-weight: 700;
   opacity: 0.15;
 }
 
-/* Khu vực nhập bình luận */
 .comment-input-area {
-  margin-top: 20px;
+  margin-top: 16px;
 }
 
 .comment-input-wrapper {
   display: flex;
   align-items: center;
-  background-color: #f6f3f1; 
+  background-color: #fff; 
   border-radius: 24px;
-  padding: 8px 14px;
-  border: 1px solid rgba(16,24,40,0.06);
-  box-shadow: 0 4px 14px rgba(16,24,40,0.04);
+  padding: 4px 14px 4px 4px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0,0,0,0.04);
 }
 
 #comment-input {
   flex-grow: 1;
   border: none;
   background: transparent;
-  padding: 10px 6px;
+  padding: 10px 12px;
   outline: none;
   font-size: 1em;
   color: #222;
@@ -751,8 +550,8 @@ font-weight: 700;
 
 .reaction-icons {
   display: flex;
-  gap: 8px;
-  padding-left: 10px;
+  gap: 4px;
+  padding-left: 8px;
 }
 
 .reaction-icons .react-icon {
@@ -761,17 +560,27 @@ font-weight: 700;
   transition: transform 0.2s;
   background: transparent;
   border: none;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+}
+.reaction-icons .react-icon img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  pointer-events: none;
 }
 
 .reaction-icons .react-icon:hover {
-  transform: scale(1.2);
+  transform: scale(1.15);
 }
 
-/* Danh sách bình luận */
 #comment-list {
   flex-grow: 1;
   overflow-y: auto;
-  padding-right: 10px;
+  padding: 10px 10px 10px 0;
   margin-bottom: 8px;
 }
 
@@ -781,67 +590,128 @@ font-weight: 700;
   gap: 10px;
   margin-bottom: 15px;
 }
-
 .comment-avatar {
   flex-shrink: 0;
-  width: 32px; 
-  height: 32px; 
+  width: 36px; 
+  height: 36px; 
 }
-
 .comment-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: 50%; 
 }
-
+.comment-content-wrapper {
+    position: relative;
+}
 .comment-content {
-  background-color: #f6f3f1; 
+  background-color: #fff; 
   padding: 10px 15px;
-  border-radius: 15px;
+  border-radius: 18px;
   font-size: 0.95em;
   width: 100%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+  border: 1px solid #f0f0f0;
+}
+.comment-reaction {
+    position: absolute;
+    right: -8px;
+    bottom: -10px;
+    background: #fff;
+    border-radius: 50%;
+    padding: 3px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: grid;
+    place-items: center;
+}
+.comment-reaction img {
+    width: 18px;
+    height: 18px;
 }
 
-/* Chân của khu vực bình luận (đếm số lượng) */
 .comment-footer {
-  text-align: right;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding-top: 15px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid #efedea;
   font-size: 0.9em;
   color: #888;
   margin-top: auto;
 }
 
-/* Thêm màu sắc cho thẻ trong modal (class sẽ được set bởi JS) */
-.gratitude-item-modal.great {
-  background-color: var(--great-bg);
-  color: var(--great-text);
+.reaction-summary {
+    display: flex;
+    align-items: center;
+    position: relative;
+    cursor: default;
 }
-.gratitude-item-modal.good {
-  background-color: var(--good-bg);
-  color: var(--good-text);
+.reaction-summary img {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #f9f9f7;
 }
-.gratitude-item-modal.okay {
-  background-color: var(--okay-bg);
-  color: var(--okay-text);
+.reaction-summary img:not(:first-child) {
+    margin-left: -8px;
 }
-.gratitude-item-modal.not-great {
-  background-color: var(--not-great-bg);
-  color: var(--not-great-text);
+.reaction-total-count {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 500;
+    margin-left: 8px;
 }
 
-/* đảm bảo phần nội dung modal hiển thị trên pseudo-element */
+.reaction-tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 0;
+    background: #333;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: flex;
+    gap: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(5px);
+    transition: all 0.2s ease;
+    pointer-events: none;
+    z-index: 10;
+}
+.reaction-summary:hover .reaction-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+.tooltip-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.tooltip-item img {
+    width: 18px;
+    height: 18px;
+    border: none;
+}
+.tooltip-item span {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+.gratitude-item-modal.great { background-color: var(--great-bg); color: var(--great-text); }
+.gratitude-item-modal.good { background-color: var(--good-bg); color: var(--good-text); }
+.gratitude-item-modal.okay { background-color: var(--okay-bg); color: var(--okay-text); }
+.gratitude-item-modal.not-great { background-color: var(--not-great-bg); color: var(--not-great-text); }
+
 .gratitude-item-modal > * {
   position: relative;
   z-index: 2;
 }
 
-/* ==== Các chỉnh sửa nhỏ để đảm bảo responsive cho modal ==== */
 @media (max-width: 880px) {
   .comment-modal-body { flex-direction: column; gap: 18px; }
   .comment-modal-right { border-left: none; padding-left: 0; max-height: 280px; }
-  .pin-img { right: 30px; top: -14px; width: 36px; }
 }
-
-/* ==== KẾT THÚC KHỐI MÃ CSS CHO MODAL BÌNH LUẬN ==== */
