@@ -136,19 +136,32 @@ function closeModal() {
 }
 
 // Render emoji buttons
-function renderEmojiButtons() {
-  emojiButtons.innerHTML = "";
+function renderEmojiButtons(noteId, reactions) {
+  emojiButtonsContainer.innerHTML = "";
   
-  REACTION_EMOJIS.forEach((emoji) => {
+  REACTION_EMOJIS.forEach(emoji => {
+    const count = reactions[emoji.id] || 0;
+    const hasReacted = currentUserReactions[noteId]?.[emoji.id] || false;
+    
     const btn = document.createElement("button");
-    btn.className = "emoji-btn";
-    btn.dataset.emojiId = emoji.id;
+    btn.className = `emoji-btn ${hasReacted ? 'active' : ''}`;
+    btn.setAttribute('data-emoji-id', emoji.id);
+    
+    // Hiển thị ảnh emoji thay vì text
     btn.innerHTML = `
-      <img src="${emoji.image}" alt="${emoji.name}" />
-      <span class="count">0</span>
+      <img src="${emoji.image}" alt="${emoji.name}" class="emoji-img" />
+      ${count > 0 ? `<span class="emoji-count">${count}</span>` : ''}
     `;
-    btn.addEventListener("click", () => handleEmojiClick(emoji.id));
-    emojiButtons.appendChild(btn);
+    
+    btn.addEventListener('click', async () => {
+      if (hasReacted) {
+        await removeReaction(noteId, emoji.id);
+      } else {
+        await addReaction(noteId, emoji.id);
+      }
+    });
+    
+    emojiButtonsContainer.appendChild(btn);
   });
 }
 
