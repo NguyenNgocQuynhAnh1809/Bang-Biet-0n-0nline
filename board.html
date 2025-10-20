@@ -38,38 +38,33 @@
       ></section>
     </main>
 
-    <!-- Modal chi tiết thẻ - Giống Facebook -->
+    <!-- Modal chi tiết -->
     <div id="noteModal" class="modal" aria-hidden="true">
       <div class="modal-overlay"></div>
       <div class="modal-content">
         <div class="modal-header">
-          <h2 id="modalTitle">Chi tiết</h2>
+          <h2>Chi tiết</h2>
           <button class="close-modal" aria-label="Đóng">×</button>
         </div>
         <div class="modal-body">
-          <div id="modalText" class="modal-main-text"></div>
+          <div id="modalText" class="modal-text"></div>
           <div id="modalMeta" class="modal-meta"></div>
           
-          <!-- Emoji reactions - Giống Facebook -->
-          <div class="emoji-reactions">
-            <div class="emoji-title">Cảm xúc của bạn</div>
-            <div class="emoji-buttons" id="emojiButtons">
-              <!-- Sẽ được render từ JavaScript với ảnh -->
-            </div>
+          <div class="reactions-section">
+            <h3>Cảm xúc của bạn</h3>
+            <div id="emojiButtons" class="emoji-row"></div>
           </div>
 
-          <!-- Comments section -->
           <div class="comments-section">
             <h3>Bình luận</h3>
             <div id="commentsList" class="comments-list"></div>
-            <div class="comment-input-wrapper">
+            <div class="comment-form">
               <textarea 
                 id="commentInput" 
-                class="comment-input" 
                 placeholder="Ai cười vậy"
                 maxlength="500"
               ></textarea>
-              <button id="submitComment" class="submit-comment-btn">Gửi</button>
+              <button id="submitComment">Gửi</button>
             </div>
           </div>
         </div>
