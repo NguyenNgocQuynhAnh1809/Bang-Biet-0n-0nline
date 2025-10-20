@@ -605,14 +605,9 @@ font-weight: 700;
   color: #333;
 }
 
-/* Hình cái ghim */
+/* Hình cái ghim (đã bị xóa khỏi HTML) */
 .pin-img {
-  position: absolute;
-  top: -20px;
-  right: 50px;
-  width: 40px;
-  transform: rotate(20deg);
-  z-index: 22; /* đảm bảo ghim nằm trên các phần tử khác */
+  display: none;
 }
 
 /* Layout chính của modal: trái và phải */
@@ -650,37 +645,37 @@ font-weight: 700;
   position: relative;
   overflow: hidden;
   color: #333;
-  font-size: 1.1em;
   min-height: 250px;
   border: 6px solid rgba(255, 255, 255, 0.92);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   background: var(--card);
 }
 
-/* SỬA ĐỔI: Căn giữa nội dung thẻ */
+/* SỬA ĐỔI: Tăng kích thước chữ nội dung */
 .gratitude-item-modal .content {
-  flex-grow: 1; /* Cho phép content chiếm không gian thừa */
+  flex-grow: 1; 
   display: flex;
-  align-items: center; /* Căn giữa theo chiều dọc */
-  justify-content: center; /* Căn giữa theo chiều ngang */
-  text-align: center; /* Căn giữa chữ */
+  align-items: center; 
+  justify-content: center; 
+  text-align: center; 
   font-weight: 500;
   line-height: 1.6;
   z-index: 2;
   position: relative;
+  font-size: 22px; /* Tăng kích thước chữ */
 }
 
-/* SỬA ĐỔI: Định dạng lại footer */
+/* SỬA ĐỔI: Căn lề trái và giảm kích thước chữ footer */
 .gratitude-item-modal .footer {
   display: flex;
-  justify-content: center; /* Căn giữa các item trong footer */
+  justify-content: flex-start; /* Căn lề trái */
   align-items: center;
-  gap: 8px; /* Khoảng cách giữa tag và thời gian */
-  font-size: 0.9em;
+  gap: 8px; 
+  font-size: 0.8em; /* Giảm kích thước chữ */
   color: var(--muted);
   z-index: 2;
   position: relative;
-  margin-top: auto; /* Đẩy footer xuống dưới */
+  margin-top: auto; 
 }
 
 .gratitude-item-modal .footer .tag {
@@ -689,7 +684,7 @@ font-weight: 700;
   gap: 6px;
   padding: 4px 10px;
   border-radius: 999px;
-  font-size: 1em; /* Kích thước chữ bằng với thời gian */
+  font-size: 1em; 
   background: rgba(255, 255, 255, 0.85);
   color: var(--ink);
   font-weight: 600;
@@ -734,11 +729,10 @@ font-weight: 700;
   margin-top: 20px;
 }
 
-/* SỬA ĐỔI: Đổi màu nền khung nhập bình luận */
 .comment-input-wrapper {
   display: flex;
   align-items: center;
-  background-color: #f6f3f1; /* Màu nền mới */
+  background-color: #f6f3f1; 
   border-radius: 24px;
   padding: 8px 14px;
   border: 1px solid rgba(16,24,40,0.06);
@@ -790,21 +784,19 @@ font-weight: 700;
 
 .comment-avatar {
   flex-shrink: 0;
-  width: 32px; /* Set width */
-  height: 32px; /* Set height */
+  width: 32px; 
+  height: 32px; 
 }
 
-/* SỬA ĐỔI: Bo tròn avatar */
 .comment-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 50%; /* Bo tròn hoàn hảo */
+  border-radius: 50%; 
 }
 
-/* SỬA ĐỔI: Đổi màu nền cho bình luận đã đăng */
 .comment-content {
-  background-color: #f6f3f1; /* Màu nền mới */
+  background-color: #f6f3f1; 
   padding: 10px 15px;
   border-radius: 15px;
   font-size: 0.95em;
