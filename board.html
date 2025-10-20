@@ -41,14 +41,22 @@
     </main>
     
     <!-- ===== BẮT ĐẦU KHỐI MÃ MODAL BÌNH LUẬN (THÊM VÀO ĐÂY) ===== -->
-    <div id="comment-modal" class="modal-overlay" style="display: none;">
-        <div class="comment-modal-content">
-            <span class="close-comment-modal">&times;</span>
+    <div id="comment-modal" class="modal-overlay" style="display: none;" aria-hidden="true">
+        <div class="comment-modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+            <span class="close-comment-modal" aria-label="Đóng">&times;</span>
             <img src="https://em-content.zobj.net/source/samsung/380/pushpin_1f4cc.png" alt="pin" class="pin-img">
             <div class="comment-modal-body">
                 <div class="comment-modal-left">
-                    <div id="modal-card-detail" class="gratitude-item-modal">
-                        <!-- Chi tiết thẻ sẽ được JS điền vào đây -->
+                    <!-- Thêm data-emoji mặc định (JS khi mở modal nên update attribute này hoặc nội dung bên trong) -->
+                    <div id="modal-card-detail" class="gratitude-item-modal" data-emoji="❤️">
+                        <!-- Placeholder nội dung nếu JS chưa kịp fill -->
+                        <div class="content">
+                          <p style="margin:0 0 8px 0; color: inherit;">Nội dung đang tải...</p>
+                        </div>
+                        <div class="footer">
+                          <div class="tag">Great</div>
+                          <div class="time">• —</div>
+                        </div>
                     </div>
                     <div class="comment-input-area">
                         <div class="comment-input-wrapper">
