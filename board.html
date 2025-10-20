@@ -37,6 +37,41 @@
         aria-busy="true"
       ></section>
     </main>
+    
+    <!-- ===== BẮT ĐẦU KHỐI MÃ MODAL BÌNH LUẬN (THÊM VÀO ĐÂY) ===== -->
+    <div id="comment-modal" class="modal-overlay" style="display: none;">
+        <div class="comment-modal-content">
+            <span class="close-comment-modal">&times;</span>
+            <img src="https://em-content.zobj.net/source/samsung/380/pushpin_1f4cc.png" alt="pin" class="pin-img">
+            <div class="comment-modal-body">
+                <div class="comment-modal-left">
+                    <div id="modal-card-detail" class="gratitude-item-modal">
+                        <!-- Chi tiết thẻ sẽ được JS điền vào đây -->
+                    </div>
+                    <div class="comment-input-area">
+                        <div class="comment-input-wrapper">
+                            <input type="text" id="comment-input" placeholder="Viết bình luận...">
+                            <div class="reaction-icons">
+                                <span class="react-icon">❤️</span>
+                                <span class="react-icon">👍</span>
+                                <span class="react-icon">😂</span>
+                                <span class="react-icon">😍</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="comment-modal-right">
+                    <div id="comment-list">
+                        <!-- Danh sách bình luận sẽ được JS điền vào đây -->
+                    </div>
+                    <div class="comment-footer">
+                        <span id="comment-count">0 bình luận</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ===== KẾT THÚC KHỐI MÃ MODAL BÌNH LUẬN ===== -->
 
     <script type="module" src="./board.js"></script>
   </body>
