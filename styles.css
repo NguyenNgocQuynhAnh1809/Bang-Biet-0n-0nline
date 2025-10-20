@@ -572,7 +572,7 @@ font-weight: 700;
 
 /* Nội dung chính của modal */
 .comment-modal-content {
-  background-color: #f9fafb; /* SỬA ĐỔI: Màu nền modal sáng hơn */
+  background-color: #fff;
   padding: 30px 40px;
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
@@ -680,7 +680,7 @@ font-weight: 700;
   font-size: 1em; 
   background: rgba(255, 255, 255, 0.85);
   color: var(--ink);
-  font-weight: 500; /* SỬA ĐỔI: Bỏ in đậm */
+  font-weight: 500;
 }
 
 .gratitude-item-modal .footer .tag .dot {
@@ -717,7 +717,7 @@ font-weight: 700;
   opacity: 0.15;
 }
 
-/* SỬA ĐỔI: Khu vực nhập bình luận */
+/* Khu vực nhập bình luận */
 .comment-input-area {
   margin-top: 20px;
 }
@@ -725,11 +725,11 @@ font-weight: 700;
 .comment-input-wrapper {
   display: flex;
   align-items: center;
-  background-color: #fff; 
+  background-color: #f6f3f1; 
   border-radius: 24px;
   padding: 4px 14px;
-  border: none; /* Bỏ viền */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Đổ bóng để nổi */
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 #comment-input {
@@ -744,7 +744,7 @@ font-weight: 700;
 
 .reaction-icons {
   display: flex;
-  gap: 4px;
+  gap: 2px;
   padding-left: 10px;
 }
 
@@ -761,7 +761,7 @@ font-weight: 700;
 }
 
 .react-btn img {
-  width: 28px; /* Chỉnh kích thước icon */
+  width: 28px;
   height: 28px;
   pointer-events: none;
 }
@@ -803,7 +803,6 @@ font-weight: 700;
   border-radius: 50%; 
 }
 
-/* SỬA ĐỔI: Bọc nội dung và reaction */
 .comment-content-wrapper {
     position: relative;
     display: flex;
@@ -813,11 +812,11 @@ font-weight: 700;
 }
 
 .comment-content {
-  background-color: #fff; 
+  background-color: #f6f3f1;
   padding: 10px 15px;
   border-radius: 18px;
   font-size: 0.95em;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  box-shadow: none;
 }
 
 .comment-reaction {
@@ -848,27 +847,32 @@ font-weight: 700;
   margin-top: auto;
 }
 
-/* SỬA ĐỔI: Khu vực đếm reactions */
-.reaction-summary {
+/* SỬA ĐỔI: Khu vực đếm reactions và tooltip */
+#reaction-summary {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
 }
 
 .reaction-count-item {
     position: relative;
     display: flex;
     align-items: center;
-    background: #fff;
-    border-radius: 12px;
-    padding: 1px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    cursor: pointer;
 }
-
 .reaction-count-item img {
     width: 20px;
     height: 20px;
-    margin-right: -4px; /* Icon chồng lên nhau một chút */
+}
+.reaction-count-item:not(:first-child) {
+    margin-left: -8px; /* Icon chồng lên nhau */
+}
+
+.summary-count {
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+    margin-left: 12px;
 }
 
 /* Tooltip cho reaction count */
@@ -878,11 +882,12 @@ font-weight: 700;
     bottom: 125%;
     left: 50%;
     transform: translateX(-50%);
-    background-color: #333;
+    background-color: rgba(0,0,0,0.8);
     color: #fff;
     padding: 4px 8px;
     border-radius: 6px;
     font-size: 12px;
+    font-weight: bold;
     white-space: nowrap;
     z-index: 10;
 }
@@ -894,7 +899,8 @@ font-weight: 700;
     transform: translateX(-50%);
     border-width: 5px;
     border-style: solid;
-    border-color: #333 transparent transparent transparent;
+    border-color: rgba(0,0,0,0.8) transparent transparent transparent;
+    z-index: 10;
 }
 
 
