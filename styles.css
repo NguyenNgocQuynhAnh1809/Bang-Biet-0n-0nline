@@ -652,45 +652,59 @@ font-weight: 700;
   color: #333;
   font-size: 1.1em;
   min-height: 250px;
-
-  /* giữ khung trắng giống .note */
   border: 6px solid rgba(255, 255, 255, 0.92);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   background: var(--card);
 }
 
-/* Nội dung/ footer đảm bảo nằm trên emoji */
+/* SỬA ĐỔI: Căn giữa nội dung thẻ */
 .gratitude-item-modal .content {
+  flex-grow: 1; /* Cho phép content chiếm không gian thừa */
+  display: flex;
+  align-items: center; /* Căn giữa theo chiều dọc */
+  justify-content: center; /* Căn giữa theo chiều ngang */
+  text-align: center; /* Căn giữa chữ */
   font-weight: 500;
   line-height: 1.6;
   z-index: 2;
   position: relative;
 }
 
+/* SỬA ĐỔI: Định dạng lại footer */
 .gratitude-item-modal .footer {
   display: flex;
-  justify-content: space-between;
+  justify-content: center; /* Căn giữa các item trong footer */
   align-items: center;
+  gap: 8px; /* Khoảng cách giữa tag và thời gian */
   font-size: 0.9em;
-  color: rgba(0, 0, 0, 0.7);
+  color: var(--muted);
   z-index: 2;
   position: relative;
+  margin-top: auto; /* Đẩy footer xuống dưới */
 }
 
 .gratitude-item-modal .footer .tag {
-    font-weight: 600;
-}
-.gratitude-item-modal .footer .time {
-    color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 1em; /* Kích thước chữ bằng với thời gian */
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--ink);
+  font-weight: 600;
 }
 
-/* SỬA ĐỔI: Thay thế pseudo-element ::before bằng ::after để hiển thị hình ảnh emoji */
-/* Bỏ ::before vì nó dùng để hiển thị ký tự text, không phải hình ảnh */
+.gratitude-item-modal .footer .tag .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
 .gratitude-item-modal::before {
   content: none;
 }
 
-/* Dùng ::after để hiển thị hình ảnh từ biến CSS --modal-emoji-url */
 .gratitude-item-modal::after {
   content: "";
   position: absolute;
@@ -703,17 +717,16 @@ font-weight: 700;
   justify-content: center;
   pointer-events: none;
   z-index: 0;
-  opacity: 0; /* Ẩn mặc định */
+  opacity: 0;
   background-image: var(--modal-emoji-url);
   background-repeat: no-repeat;
   background-position: center;
-  background-size: 60%; /* Kích thước của emoji */
+  background-size: 60%;
   transition: opacity 0.2s ease-in-out;
 }
 
-/* Kích hoạt ::after khi có class .has-emoji-image */
 .gratitude-item-modal.has-emoji-image::after {
-  opacity: 0.15; /* Độ mờ của emoji */
+  opacity: 0.15;
 }
 
 /* Khu vực nhập bình luận */
@@ -721,13 +734,14 @@ font-weight: 700;
   margin-top: 20px;
 }
 
+/* SỬA ĐỔI: Đổi màu nền khung nhập bình luận */
 .comment-input-wrapper {
   display: flex;
   align-items: center;
-  background-color: #ffffff; /* sắc trắng nhẹ để giống khung */
+  background-color: #f6f3f1; /* Màu nền mới */
   border-radius: 24px;
   padding: 8px 14px;
-  border: 1px solid rgba(16,24,40,0.06); /* viền nhạt */
+  border: 1px solid rgba(16,24,40,0.06);
   box-shadow: 0 4px 14px rgba(16,24,40,0.04);
 }
 
@@ -763,7 +777,7 @@ font-weight: 700;
 #comment-list {
   flex-grow: 1;
   overflow-y: auto;
-  padding-right: 10px; /* Khoảng trống cho thanh cuộn */
+  padding-right: 10px;
   margin-bottom: 8px;
 }
 
@@ -775,16 +789,22 @@ font-weight: 700;
 }
 
 .comment-avatar {
-  font-size: 2em;
   flex-shrink: 0;
-  margin-top: -5px; /* Căn chỉnh avatar cho đẹp hơn */
-}
-.comment-avatar img {
-    border-radius: 50%;
+  width: 32px; /* Set width */
+  height: 32px; /* Set height */
 }
 
+/* SỬA ĐỔI: Bo tròn avatar */
+.comment-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%; /* Bo tròn hoàn hảo */
+}
+
+/* SỬA ĐỔI: Đổi màu nền cho bình luận đã đăng */
 .comment-content {
-  background-color: #f0f2f5; /* Màu nền giống Facebook */
+  background-color: #f6f3f1; /* Màu nền mới */
   padding: 10px 15px;
   border-radius: 15px;
   font-size: 0.95em;
@@ -798,7 +818,7 @@ font-weight: 700;
   border-top: 1px solid #eee;
   font-size: 0.9em;
   color: #888;
-  margin-top: auto; /* Đẩy xuống dưới cùng */
+  margin-top: auto;
 }
 
 /* Thêm màu sắc cho thẻ trong modal (class sẽ được set bởi JS) */
