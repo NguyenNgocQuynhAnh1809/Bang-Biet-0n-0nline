@@ -45,12 +45,12 @@ body {
 }
 body.bg {
   min-height: 100svh;
-  /* Dùng ảnh làm nền + lớp phủ trắng để chữ dễ đọc */
+  /* SỬA Ở ĐÂY: Bỏ "./" trong url() */
   background: linear-gradient(
       rgba(255, 255, 255, 0.6),
       rgba(255, 255, 255, 0.6)
     ),
-    url("./hoa.jpg") center/cover no-repeat;
+    url("hoa.jpg") center/cover no-repeat;
   color: var(--ink);
   font: 16px/1.4 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
     Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
@@ -509,248 +509,248 @@ body.bg {
   padding: 0;
   margin: -1px;
   overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
+clip: rect(0, 0, 0, 0);
+white-space: nowrap;
+border-width: 0;
 }
 
 /* Hiệu ứng chọn: ảnh phóng to nhẹ + nhãn đậm hơn */
 .mood-btn .face img {
-  transition: transform 0.12s ease, filter 0.15s ease;
+transition: transform 0.12s ease, filter 0.15s ease;
 }
 .mood-btn.active .face img {
-  transform: scale(1.08);
-  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.18));
+transform: scale(1.08);
+filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.18));
 }
 
 .mood-btn .label {
-  transition: color 0.12s ease, font-weight 0.12s ease;
+transition: color 0.12s ease, font-weight 0.12s ease;
 }
 .mood-btn.active .label {
-  color: #111;
-  font-weight: 700;
+color: #111;
+font-weight: 700;
 }
 
 /* ===== BẮT ĐẦU KHỐI MÃ CSS CHO MODAL BÌNH LUẬN (THÊM VÀO CUỐI TỆP) ===== */
 
 /* Lớp phủ cho modal */
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); /* Nền đen mờ */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1001;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0s 0.3s linear;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.6); /* Nền đen mờ */
+display: flex;
+justify-content: center;
+align-items: center;
+z-index: 1001;
+opacity: 0;
+visibility: hidden;
+transition: opacity 0.3s ease, visibility 0s 0.3s linear;
 }
 
 .modal-overlay.show {
-    opacity: 1;
-    visibility: visible;
-    transition: opacity 0.3s ease;
+opacity: 1;
+visibility: visible;
+transition: opacity 0.3s ease;
 }
 
 /* Nội dung chính của modal */
 .comment-modal-content {
-    background-color: #fff;
-    padding: 30px 40px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    width: 90%;
-    max-width: 900px;
-    position: relative;
-    transform: scale(0.95);
-    transition: transform 0.3s ease;
+background-color: #fff;
+padding: 30px 40px;
+border-radius: 20px;
+box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+width: 90%;
+max-width: 900px;
+position: relative;
+transform: scale(0.95);
+transition: transform 0.3s ease;
 }
 
 .modal-overlay.show .comment-modal-content {
-    transform: scale(1);
+transform: scale(1);
 }
 
 /* Nút đóng modal */
 .close-comment-modal {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    font-size: 28px;
-    font-weight: bold;
-    color: #888;
-    cursor: pointer;
-    transition: color 0.2s;
-    z-index: 10;
+position: absolute;
+top: 15px;
+right: 20px;
+font-size: 28px;
+font-weight: bold;
+color: #888;
+cursor: pointer;
+transition: color 0.2s;
+z-index: 10;
 }
 
 .close-comment-modal:hover {
-    color: #333;
+color: #333;
 }
 
 /* Hình cái ghim */
 .pin-img {
-    position: absolute;
-    top: -20px;
-    right: 50px;
-    width: 40px;
-    transform: rotate(20deg);
+position: absolute;
+top: -20px;
+right: 50px;
+width: 40px;
+transform: rotate(20deg);
 }
 
 /* Layout chính của modal: trái và phải */
 .comment-modal-body {
-    display: flex;
-    gap: 30px;
+display: flex;
+gap: 30px;
 }
 
 .comment-modal-left {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+flex: 1;
+display: flex;
+flex-direction: column;
 }
 
 .comment-modal-right {
-    flex: 1;
-    border-left: 1px solid #eee;
-    padding-left: 30px;
-    display: flex;
-    flex-direction: column;
-    max-height: 450px; /* Giới hạn chiều cao và cho phép cuộn */
+flex: 1;
+border-left: 1px solid #eee;
+padding-left: 30px;
+display: flex;
+flex-direction: column;
+max-height: 450px; /* Giới hạn chiều cao và cho phép cuộn */
 }
 
 /* Thẻ chi tiết bên trong modal (phía trái) */
 .gratitude-item-modal {
-    padding: 25px;
-    border-radius: 15px;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    position: relative;
-    overflow: hidden;
-    color: #333;
-    font-size: 1.1em;
-    min-height: 250px;
+padding: 25px;
+border-radius: 15px;
+height: 100%;
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+position: relative;
+overflow: hidden;
+color: #333;
+font-size: 1.1em;
+min-height: 250px;
 }
 
 .gratitude-item-modal .content {
-    font-weight: 500;
-    line-height: 1.6;
-    z-index: 2;
+font-weight: 500;
+line-height: 1.6;
+z-index: 2;
 }
 
 .gratitude-item-modal .footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.9em;
-    color: rgba(0, 0, 0, 0.7);
-    z-index: 2;
+display: flex;
+justify-content: space-between;
+align-items: center;
+font-size: 0.9em;
+color: rgba(0, 0, 0, 0.7);
+z-index: 2;
 }
 
 /* Emoji nền của thẻ */
 .gratitude-item-modal::before {
-    content: attr(data-emoji);
-    position: absolute;
-    bottom: -20px;
-    right: -20px;
-    font-size: 120px;
-    opacity: 0.1;
-    z-index: 1;
+content: attr(data-emoji);
+position: absolute;
+bottom: -20px;
+right: -20px;
+font-size: 120px;
+opacity: 0.1;
+z-index: 1;
 }
 
 /* Khu vực nhập bình luận */
 .comment-input-area {
-    margin-top: 20px;
+margin-top: 20px;
 }
 
 .comment-input-wrapper {
-    display: flex;
-    align-items: center;
-    background-color: #f0f2f5; /* Màu nền giống Facebook */
-    border-radius: 18px;
-    padding: 5px 15px;
+display: flex;
+align-items: center;
+background-color: #f0f2f5; /* Màu nền giống Facebook */
+border-radius: 18px;
+padding: 5px 15px;
 }
 
 #comment-input {
-    flex-grow: 1;
-    border: none;
-    background: transparent;
-    padding: 10px 0;
-    outline: none;
-    font-size: 1em;
+flex-grow: 1;
+border: none;
+background: transparent;
+padding: 10px 0;
+outline: none;
+font-size: 1em;
 }
 
 .reaction-icons {
-    display: flex;
-    gap: 8px;
-    padding-left: 10px;
+display: flex;
+gap: 8px;
+padding-left: 10px;
 }
 
 .reaction-icons .react-icon {
-    font-size: 1.2em;
-    cursor: pointer;
-    transition: transform 0.2s;
+font-size: 1.2em;
+cursor: pointer;
+transition: transform 0.2s;
 }
 
 .reaction-icons .react-icon:hover {
-    transform: scale(1.2);
+transform: scale(1.2);
 }
 
 /* Danh sách bình luận */
 #comment-list {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding-right: 10px; /* Khoảng trống cho thanh cuộn */
+flex-grow: 1;
+overflow-y: auto;
+padding-right: 10px; /* Khoảng trống cho thanh cuộn */
 }
 
 .comment-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    margin-bottom: 15px;
+display: flex;
+align-items: flex-start;
+gap: 10px;
+margin-bottom: 15px;
 }
 
 .comment-avatar {
-    font-size: 2em;
-    flex-shrink: 0;
-    margin-top: -5px; /* Căn chỉnh avatar cho đẹp hơn */
+font-size: 2em;
+flex-shrink: 0;
+margin-top: -5px; /* Căn chỉnh avatar cho đẹp hơn */
 }
 
 .comment-content {
-    background-color: #f0f2f5; /* Màu nền giống Facebook */
-    padding: 10px 15px;
-    border-radius: 15px;
-    font-size: 0.95em;
-    width: 100%;
+background-color: #f0f2f5; /* Màu nền giống Facebook */
+padding: 10px 15px;
+border-radius: 15px;
+font-size: 0.95em;
+width: 100%;
 }
 
 /* Chân của khu vực bình luận (đếm số lượng) */
 .comment-footer {
-    text-align: right;
-    padding-top: 15px;
-    border-top: 1px solid #eee;
-    font-size: 0.9em;
-    color: #888;
-    margin-top: auto; /* Đẩy xuống dưới cùng */
+text-align: right;
+padding-top: 15px;
+border-top: 1px solid #eee;
+font-size: 0.9em;
+color: #888;
+margin-top: auto; /* Đẩy xuống dưới cùng */
 }
 
 /* Thêm màu sắc cho thẻ trong modal */
 .gratitude-item-modal.great {
-  background-color: var(--great-bg);
-  color: var(--great-text);
+background-color: var(--great-bg);
+color: var(--great-text);
 }
 .gratitude-item-modal.good {
-  background-color: var(--good-bg);
-  color: var(--good-text);
+background-color: var(--good-bg);
+color: var(--good-text);
 }
 .gratitude-item-modal.okay {
-  background-color: var(--okay-bg);
-  color: var(--okay-text);
+background-color: var(--okay-bg);
+color: var(--okay-text);
 }
 .gratitude-item-modal.not-great {
-  background-color: var(--not-great-bg);
-  color: var(--not-great-text);
+background-color: var(--not-great-bg);
+color: var(--not-great-text);
 }
