@@ -16,20 +16,14 @@ service cloud.firestore {
       && docId == request.resource.data.clientId + '_' + request.resource.data.dateKey
       && !exists(/databases/$(database)/documents/gratitudes/$(docId));
 
-      // QUY TẮC MỚI: Cho phép cập nhật để thêm bình luận
+      // QUY TẮC MỚI ĐÃ SỬA LỖI: Chỉ kiểm tra các trường không thay đổi
       allow update: if 
-        // 1. Chỉ cho phép thêm hoặc thay đổi trường 'comments'.
-        request.resource.data.keys().hasAll(resource.data.keys())
-        && request.resource.data.keys().hasOnly(resource.data.keys().concat(['comments']))
-        // 2. Đảm bảo các trường dữ liệu gốc không bị thay đổi.
-        && request.resource.data.text == resource.data.text
-        && request.resource.data.clientId == resource.data.clientId
-        && request.resource.data.createdAt == resource.data.createdAt
-        // 3. Xác thực dữ liệu của trường 'comments'.
+        // 1. Yêu cầu cập nhật chỉ được chứa trường 'comments'.
+        request.writeFields.hasOnly(['comments'])
+        // 2. Kiểm tra xem trường 'comments' được gửi lên có phải là một danh sách (List) hay không.
         && request.resource.data.comments is list;
-        // (Bạn có thể thêm các quy tắc xác thực chi tiết hơn cho từng bình luận nếu cần)
 
-      // Vẫn không cho phép xóa
+      // Giữ nguyên: Không cho phép xóa
       allow delete: if false;
     }
   }
