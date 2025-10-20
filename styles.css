@@ -34,6 +34,19 @@
   --okay: #b8dfcb;
   --good: #fde364;
   --great: #ec97a5;
+
+  /* modal specific/fallback vars */
+  --great-bg: color-mix(in srgb, var(--great) 40%, #fff 60%);
+  --great-text: #3e2a2a;
+  --good-bg: color-mix(in srgb, var(--good) 40%, #fff 60%);
+  --good-text: #3e2a2a;
+  --okay-bg: color-mix(in srgb, var(--okay) 40%, #fff 60%);
+  --okay-text: #333;
+  --not-great-bg: color-mix(in srgb, var(--notgreat) 40%, #fff 60%);
+  --not-great-text: #333;
+
+  /* If you want to use an emoji image in modal, set this to: url("/path/to/emoji.png") */
+  --modal-emoji-url: "";
 }
 
 * {
@@ -45,7 +58,7 @@ body {
 }
 body.bg {
   min-height: 100svh;
-  /* SỬA Ở ĐÂY: Bỏ "./" trong url() */
+  /* SỬA Ở ĐÂY: Bỏ "./" trong url() nếu cần, hoặc dùng đường dẫn tuyệt đối cho Github Pages */
   background: linear-gradient(
       rgba(255, 255, 255, 0.6),
       rgba(255, 255, 255, 0.6)
@@ -535,222 +548,282 @@ font-weight: 700;
 
 /* Lớp phủ cho modal */
 .modal-overlay {
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-background-color: rgba(0, 0, 0, 0.6); /* Nền đen mờ */
-display: flex;
-justify-content: center;
-align-items: center;
-z-index: 1001;
-opacity: 0;
-visibility: hidden;
-transition: opacity 0.3s ease, visibility 0s 0.3s linear;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Nền đen mờ */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1001;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0s 0.3s linear;
 }
 
 .modal-overlay.show {
-opacity: 1;
-visibility: visible;
-transition: opacity 0.3s ease;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease;
 }
 
 /* Nội dung chính của modal */
 .comment-modal-content {
-background-color: #fff;
-padding: 30px 40px;
-border-radius: 20px;
-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-width: 90%;
-max-width: 900px;
-position: relative;
-transform: scale(0.95);
-transition: transform 0.3s ease;
+  background-color: #fff;
+  padding: 30px 40px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  width: 90%;
+  max-width: 900px;
+  position: relative;
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
+  overflow: visible;
 }
 
 .modal-overlay.show .comment-modal-content {
-transform: scale(1);
+  transform: scale(1);
 }
 
 /* Nút đóng modal */
 .close-comment-modal {
-position: absolute;
-top: 15px;
-right: 20px;
-font-size: 28px;
-font-weight: bold;
-color: #888;
-cursor: pointer;
-transition: color 0.2s;
-z-index: 10;
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 28px;
+  font-weight: bold;
+  color: #888;
+  cursor: pointer;
+  transition: color 0.2s;
+  z-index: 20;
 }
 
 .close-comment-modal:hover {
-color: #333;
+  color: #333;
 }
 
 /* Hình cái ghim */
 .pin-img {
-position: absolute;
-top: -20px;
-right: 50px;
-width: 40px;
-transform: rotate(20deg);
+  position: absolute;
+  top: -20px;
+  right: 50px;
+  width: 40px;
+  transform: rotate(20deg);
+  z-index: 22; /* đảm bảo ghim nằm trên các phần tử khác */
 }
 
 /* Layout chính của modal: trái và phải */
 .comment-modal-body {
-display: flex;
-gap: 30px;
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
 }
 
 .comment-modal-left {
-flex: 1;
-display: flex;
-flex-direction: column;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 280px;
 }
 
 .comment-modal-right {
-flex: 1;
-border-left: 1px solid #eee;
-padding-left: 30px;
-display: flex;
-flex-direction: column;
-max-height: 450px; /* Giới hạn chiều cao và cho phép cuộn */
+  flex: 1;
+  border-left: 1px solid #eee;
+  padding-left: 30px;
+  display: flex;
+  flex-direction: column;
+  max-height: 450px; /* Giới hạn chiều cao và cho phép cuộn */
+  min-width: 220px;
 }
 
 /* Thẻ chi tiết bên trong modal (phía trái) */
 .gratitude-item-modal {
-padding: 25px;
-border-radius: 15px;
-height: 100%;
-display: flex;
-flex-direction: column;
-justify-content: space-between;
-position: relative;
-overflow: hidden;
-color: #333;
-font-size: 1.1em;
-min-height: 250px;
+  padding: 25px;
+  border-radius: 15px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  color: #333;
+  font-size: 1.1em;
+  min-height: 250px;
+
+  /* giữ khung trắng giống .note */
+  border: 6px solid rgba(255, 255, 255, 0.92);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  background: var(--card);
 }
 
+/* Nội dung/ footer đảm bảo nằm trên emoji */
 .gratitude-item-modal .content {
-font-weight: 500;
-line-height: 1.6;
-z-index: 2;
+  font-weight: 500;
+  line-height: 1.6;
+  z-index: 2;
+  position: relative;
 }
 
 .gratitude-item-modal .footer {
-display: flex;
-justify-content: space-between;
-align-items: center;
-font-size: 0.9em;
-color: rgba(0, 0, 0, 0.7);
-z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9em;
+  color: rgba(0, 0, 0, 0.7);
+  z-index: 2;
+  position: relative;
 }
 
-/* Emoji nền của thẻ */
+/* Emoji nền của thẻ: fallback qua data-emoji (ký tự) */
 .gratitude-item-modal::before {
-content: attr(data-emoji);
-position: absolute;
-bottom: -20px;
-right: -20px;
-font-size: 120px;
-opacity: 0.1;
-z-index: 1;
+  content: attr(data-emoji);
+  position: absolute;
+  bottom: -10px;
+  right: -6px;
+  font-size: 120px;
+  opacity: 0.08;
+  z-index: 1;
+  pointer-events: none;
+  line-height: 1;
+  transform: translateZ(0);
+  display: block;
+}
+
+/* Nếu muốn dùng ảnh emoji thay cho ký tự, set --modal-emoji-url: url('/path/to.png') trong :root
+   và thêm class .has-emoji-image lên .gratitude-item-modal để bật ::after */
+.gratitude-item-modal::after {
+  content: "";
+  position: absolute;
+  right: 12px;
+  bottom: 8px;
+  width: 140px;
+  height: 140px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 0.12s;
+  background-image: var(--modal-emoji-url);
+}
+.gratitude-item-modal.has-emoji-image::after {
+  opacity: 0.12;
 }
 
 /* Khu vực nhập bình luận */
 .comment-input-area {
-margin-top: 20px;
+  margin-top: 20px;
 }
 
 .comment-input-wrapper {
-display: flex;
-align-items: center;
-background-color: #f0f2f5; /* Màu nền giống Facebook */
-border-radius: 18px;
-padding: 5px 15px;
+  display: flex;
+  align-items: center;
+  background-color: #ffffff; /* sắc trắng nhẹ để giống khung */
+  border-radius: 24px;
+  padding: 8px 14px;
+  border: 1px solid rgba(16,24,40,0.06); /* viền nhạt */
+  box-shadow: 0 4px 14px rgba(16,24,40,0.04);
 }
 
 #comment-input {
-flex-grow: 1;
-border: none;
-background: transparent;
-padding: 10px 0;
-outline: none;
-font-size: 1em;
+  flex-grow: 1;
+  border: none;
+  background: transparent;
+  padding: 10px 6px;
+  outline: none;
+  font-size: 1em;
+  color: #222;
 }
 
 .reaction-icons {
-display: flex;
-gap: 8px;
-padding-left: 10px;
+  display: flex;
+  gap: 8px;
+  padding-left: 10px;
 }
 
 .reaction-icons .react-icon {
-font-size: 1.2em;
-cursor: pointer;
-transition: transform 0.2s;
+  font-size: 1.2em;
+  cursor: pointer;
+  transition: transform 0.2s;
+  background: transparent;
+  border: none;
 }
 
 .reaction-icons .react-icon:hover {
-transform: scale(1.2);
+  transform: scale(1.2);
 }
 
 /* Danh sách bình luận */
 #comment-list {
-flex-grow: 1;
-overflow-y: auto;
-padding-right: 10px; /* Khoảng trống cho thanh cuộn */
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-right: 10px; /* Khoảng trống cho thanh cuộn */
+  margin-bottom: 8px;
 }
 
 .comment-item {
-display: flex;
-align-items: flex-start;
-gap: 10px;
-margin-bottom: 15px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 15px;
 }
 
 .comment-avatar {
-font-size: 2em;
-flex-shrink: 0;
-margin-top: -5px; /* Căn chỉnh avatar cho đẹp hơn */
+  font-size: 2em;
+  flex-shrink: 0;
+  margin-top: -5px; /* Căn chỉnh avatar cho đẹp hơn */
 }
 
 .comment-content {
-background-color: #f0f2f5; /* Màu nền giống Facebook */
-padding: 10px 15px;
-border-radius: 15px;
-font-size: 0.95em;
-width: 100%;
+  background-color: #f0f2f5; /* Màu nền giống Facebook */
+  padding: 10px 15px;
+  border-radius: 15px;
+  font-size: 0.95em;
+  width: 100%;
 }
 
 /* Chân của khu vực bình luận (đếm số lượng) */
 .comment-footer {
-text-align: right;
-padding-top: 15px;
-border-top: 1px solid #eee;
-font-size: 0.9em;
-color: #888;
-margin-top: auto; /* Đẩy xuống dưới cùng */
+  text-align: right;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+  font-size: 0.9em;
+  color: #888;
+  margin-top: auto; /* Đẩy xuống dưới cùng */
 }
 
-/* Thêm màu sắc cho thẻ trong modal */
+/* Thêm màu sắc cho thẻ trong modal (class sẽ được set bởi JS) */
 .gratitude-item-modal.great {
-background-color: var(--great-bg);
-color: var(--great-text);
+  background-color: var(--great-bg);
+  color: var(--great-text);
 }
 .gratitude-item-modal.good {
-background-color: var(--good-bg);
-color: var(--good-text);
+  background-color: var(--good-bg);
+  color: var(--good-text);
 }
 .gratitude-item-modal.okay {
-background-color: var(--okay-bg);
-color: var(--okay-text);
+  background-color: var(--okay-bg);
+  color: var(--okay-text);
 }
 .gratitude-item-modal.not-great {
-background-color: var(--not-great-bg);
-color: var(--not-great-text);
+  background-color: var(--not-great-bg);
+  color: var(--not-great-text);
 }
+
+/* đảm bảo phần nội dung modal hiển thị trên pseudo-element */
+.gratitude-item-modal > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* ==== Các chỉnh sửa nhỏ để đảm bảo responsive cho modal ==== */
+@media (max-width: 880px) {
+  .comment-modal-body { flex-direction: column; gap: 18px; }
+  .comment-modal-right { border-left: none; padding-left: 0; max-height: 280px; }
+  .pin-img { right: 30px; top: -14px; width: 36px; }
+}
+
+/* ==== KẾT THÚC KHỐI MÃ CSS CHO MODAL BÌNH LUẬN ==== */
