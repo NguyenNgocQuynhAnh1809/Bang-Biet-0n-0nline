@@ -113,23 +113,23 @@ export function listenGratitudes(callback) {
   });
 }
 
-// Add comment to a note (anonymous)
+// Add comment
 export async function addComment(noteId, text) {
-  const clean = text.replace(/\s+/g, " ").trim().slice(0, 500);
+  const clean = text.trim().slice(0, 500);
   if (!clean) throw new Error("Empty comment");
 
   const commentsRef = collection(db, "gratitudes", noteId, "comments");
-  const newCommentRef = doc(commentsRef);
+  const newDoc = doc(commentsRef);
   
-  await setDoc(newCommentRef, {
+  await setDoc(newDoc, {
     text: clean,
     createdAt: serverTimestamp(),
   });
   
-  return newCommentRef.id;
+  return newDoc.id;
 }
 
-// Listen to comments for a note
+// Listen comments
 export function listenComments(noteId, callback) {
   const commentsRef = collection(db, "gratitudes", noteId, "comments");
   const q = query(commentsRef, orderBy("createdAt", "asc"));
@@ -138,15 +138,13 @@ export function listenComments(noteId, callback) {
     const comments = snap.docs.map((d) => ({
       id: d.id,
       text: d.data().text || "",
-      createdAt: d.data().createdAt?.toMillis
-        ? d.data().createdAt.toMillis()
-        : Date.now(),
+      createdAt: d.data().createdAt?.toMillis?.() || Date.now(),
     }));
     callback(comments);
   });
 }
 
-// Add emoji reaction (one per user per note)
+// Add reaction
 export async function addReaction(noteId, clientId, emojiId) {
   const reactionRef = doc(db, "gratitudes", noteId, "reactions", clientId);
   await setDoc(reactionRef, {
@@ -155,8 +153,8 @@ export async function addReaction(noteId, clientId, emojiId) {
   });
 }
 
-// Remove emoji reaction
-export async function removeReaction(noteId, clientId, emojiId) {
+// Remove reaction
+export async function removeReaction(noteId, clientId) {
   const reactionRef = doc(db, "gratitudes", noteId, "reactions", clientId);
   await setDoc(reactionRef, {
     emojiId: null,
@@ -164,7 +162,7 @@ export async function removeReaction(noteId, clientId, emojiId) {
   });
 }
 
-// Listen to reactions for a note
+// Listen reactions
 export function listenReactions(noteId, callback) {
   const reactionsRef = collection(db, "gratitudes", noteId, "reactions");
   
