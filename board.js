@@ -1,20 +1,23 @@
-import { listenGratitudes, EMOTIONS, updateGratitude } from "./firebase.js";
+import { listenGratitudes, EMOTIONS, updateGratitude } from "./firebase.js"; // Giả sử có hàm updateGratitude
 
 const gridEl = document.getElementById("grid");
 const legendEl = document.getElementById("legend");
 const barEl = document.getElementById("bar");
 const totalEl = document.getElementById("total");
 
+// BẮT ĐẦU: Lấy các phần tử HTML của Modal
 const commentModalEl = document.getElementById("comment-modal");
 const closeModalBtn = document.querySelector(".close-comment-modal");
 const modalCardDetailEl = document.getElementById("modal-card-detail");
 const commentListEl = document.getElementById("comment-list");
 const commentCountEl = document.getElementById("comment-count");
 const commentInputEl = document.getElementById("comment-input");
-const reactionIconsContainer = document.querySelector('.reaction-icons');
-const reactionSummaryEl = document.getElementById('reaction-summary');
+// KẾT THÚC: Lấy các phần tử HTML của Modal
 
+// Chỉ còn 4 cảm xúc
 const orderKeys = ["notgreat", "okay", "good", "great"];
+
+// Biến để lưu trữ item hiện tại đang được xem trong modal
 let currentItem = null;
 
 function renderLegend(stats) {
@@ -98,60 +101,19 @@ function renderComments(item) {
   const mascotImg = EMOTIONS[item.emotionKey]?.img;
 
   commentListEl.innerHTML = "";
-  comments.forEach(comment => {
+  comments.forEach(commentText => {
     const commentItem = document.createElement("div");
     commentItem.className = "comment-item";
-    
-    let reactionHTML = '';
-    if(comment.reaction) {
-        reactionHTML = `<div class="comment-reaction"><img src="${comment.reaction}.png" alt="reaction ${comment.reaction}"></div>`;
-    }
-
     commentItem.innerHTML = `
       <div class="comment-avatar">
-        <img src="${mascotImg || 'default-avatar.png'}" alt="" />
+        <img src="${mascotImg}" alt="" />
       </div>
-      <div class="comment-content-wrapper">
-        <div class="comment-content">${comment.text}</div>
-        ${reactionHTML}
-      </div>
+      <div class="comment-content">${commentText}</div>
     `;
     commentListEl.appendChild(commentItem);
   });
   commentCountEl.textContent = `${comments.length} bình luận`;
 }
-
-function renderReactionSummary(item) {
-    const reactions = item.reactions || {};
-    const reactionCounts = Object.values(reactions).reduce((acc, reactionType) => {
-        acc[reactionType] = (acc[reactionType] || 0) + 1;
-        return acc;
-    }, {});
-
-    const sortedReactions = Object.keys(reactionCounts).sort((a, b) => reactionCounts[b] - reactionCounts[a]);
-    const totalReactions = Object.keys(reactions).length;
-
-    if (totalReactions === 0) {
-        reactionSummaryEl.innerHTML = '';
-        return;
-    }
-
-    let summaryHTML = '';
-    sortedReactions.slice(0, 3).forEach(type => {
-        summaryHTML += `<img src="${type}.png" alt="reaction ${type}">`;
-    });
-    
-    summaryHTML += `<span class="reaction-total-count">${totalReactions}</span>`;
-
-    let tooltipHTML = '<div class="reaction-tooltip">';
-    Object.entries(reactionCounts).forEach(([type, count]) => {
-        tooltipHTML += `<div class="tooltip-item"><img src="${type}.png" alt="reaction ${type}"><span>${count}</span></div>`;
-    });
-    tooltipHTML += '</div>';
-
-    reactionSummaryEl.innerHTML = summaryHTML + tooltipHTML;
-}
-
 
 function openCommentModal(item) {
   currentItem = item;
@@ -167,6 +129,7 @@ function openCommentModal(item) {
       modalCardDetailEl.classList.remove('has-emoji-image');
   }
 
+  // SỬA ĐỔI: Cập nhật cấu trúc HTML cho footer để khớp với thiết kế mới
   modalCardDetailEl.innerHTML = `
     <div class="content"><p>${item.text}</p></div>
     <div class="footer">
@@ -179,7 +142,6 @@ function openCommentModal(item) {
   `;
   
   renderComments(item);
-  renderReactionSummary(item);
 
   commentModalEl.style.display = 'flex';
   setTimeout(() => commentModalEl.classList.add('show'), 10);
@@ -194,21 +156,11 @@ function closeCommentModal() {
   }, 300);
 }
 
-async function handleAddComment(reactionType = null) {
+async function handleAddComment() {
     const commentText = commentInputEl.value.trim();
-    if ((commentText === '' && !reactionType) || !currentItem) return;
+    if (commentText === '' || !currentItem) return;
 
-    const newComment = {
-        text: commentText,
-        // Using a simple timestamp as a unique ID for the comment for now
-        id: Date.now(), 
-    };
-
-    if (reactionType) {
-        newComment.reaction = reactionType;
-    }
-
-    const newComments = currentItem.comments ? [...currentItem.comments, newComment] : [newComment];
+    const newComments = currentItem.comments ? [...currentItem.comments, commentText] : [commentText];
     
     try {
         await updateGratitude(currentItem.id, { comments: newComments });
@@ -218,24 +170,6 @@ async function handleAddComment(reactionType = null) {
     } catch (error) {
         console.error("Lỗi khi thêm bình luận:", error);
         alert("Không thể thêm bình luận. Vui lòng thử lại.");
-    }
-}
-
-async function handleAddReaction(reactionType) {
-    if (!currentItem) return;
-
-    // For simplicity, we'll use a unique ID for the user. In a real app, this would be the logged-in user's ID.
-    const userId = `user_${Math.random().toString(36).substr(2, 9)}`;
-    const newReactions = { ...(currentItem.reactions || {}) };
-    newReactions[userId] = reactionType; // Each user can only have one reaction
-
-    try {
-        await updateGratitude(currentItem.id, { reactions: newReactions });
-        currentItem.reactions = newReactions;
-        renderReactionSummary(currentItem);
-    } catch (error) {
-        console.error("Lỗi khi thả reaction:", error);
-        alert("Không thể thả reaction. Vui lòng thử lại.");
     }
 }
 
@@ -264,20 +198,6 @@ commentInputEl.addEventListener('keypress', (e) => {
   }
 });
 
-reactionIconsContainer.addEventListener('click', (e) => {
-    const reactionButton = e.target.closest('.react-icon');
-    if (reactionButton) {
-        const reactionType = reactionButton.dataset.reaction;
-        if (commentInputEl.value.trim() !== '') {
-            // If there is text, post a comment with a reaction
-            handleAddComment(reactionType);
-        } else {
-            // If there is no text, just add a reaction to the post
-            handleAddReaction(reactionType);
-        }
-    }
-});
-
 listenGratitudes((items) => {
   window.gratitudeItems = items;
 
@@ -297,9 +217,21 @@ listenGratitudes((items) => {
       if (updatedItem) {
           currentItem = updatedItem;
           renderComments(updatedItem);
-          renderReactionSummary(updatedItem);
       } else {
           closeCommentModal();
       }
   }
+});
+
+document.querySelectorAll('a[aria-label="Facebook cá nhân"]').forEach((a) => {
+  a.addEventListener("click", (e) => {
+    const href = a.getAttribute("href");
+    if (href) {
+      setTimeout(() => {
+        try {
+          window.open(href, "_blank", "noopener");
+        } catch {}
+      }, 10);
+    }
+  });
 });
