@@ -2,21 +2,25 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /gratitudes/{docId} {
-      allow read: if true; // bảng công khai
+      // Cho phép bất kỳ ai đọc dữ liệu
+      allow read: if true;
 
-      // Chỉ cho tạo mới; 1 lần/ngày: docId = clientId_dateKey
+      // Giữ nguyên quy tắc tạo mục mới của bạn
       allow create: if request.resource.data.keys().hasOnly([
         'text','emotionKey','emotionLabel','color','moodScore','createdAt','clientId','dateKey'
       ])
       && request.resource.data.text is string
       && request.resource.data.text.size() > 0
       && request.resource.data.text.size() <= 240
-      && request.resource.data.emotionKey in ['bad','notgreat','okay','good','great']
+      && request.resource.data.emotionKey in ['notgreat','okay','good','great']
       && request.time == request.resource.data.createdAt
       && docId == request.resource.data.clientId + '_' + request.resource.data.dateKey
       && !exists(/databases/$(database)/documents/gratitudes/$(docId));
 
-      allow update, delete: if false;
+      // THAY ĐỔI QUAN TRỌNG: Cho phép cập nhật (để thêm bình luận)
+      // nhưng vẫn không cho phép xóa.
+      allow update: if true;
+      allow delete: if false;
     }
   }
 }
