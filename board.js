@@ -119,23 +119,25 @@ function renderComments(item) {
 
 function openCommentModal(item) {
   currentItem = item;
-  const emotionClass = `emo-${item.emotionKey}`;
+  // SỬA ĐỔI: Sử dụng emotionKey trực tiếp (ví dụ: 'great') và xử lý 'notgreat' thành 'not-great' cho CSS
+  const emotionClass = item.emotionKey === 'notgreat' ? 'not-great' : item.emotionKey;
   const mascotImg = EMOTIONS[item.emotionKey]?.img;
   
   modalCardDetailEl.className = `gratitude-item-modal ${emotionClass}`;
-  modalCardDetailEl.dataset.emoji = mascotImg ? '' : '❓'; // Nếu không có ảnh, dùng emoji
+  
+  // SỬA ĐỔI: Sử dụng biến CSS để đặt hình nền emoji và thêm class để kích hoạt nó
   if (mascotImg) {
     modalCardDetailEl.style.setProperty('--modal-emoji-url', `url(${mascotImg})`);
     modalCardDetailEl.classList.add('has-emoji-image');
   } else {
-    modalCardDetailEl.style.setProperty('--modal-emoji-url', '');
-    modalCardDetailEl.classList.remove('has-emoji-image');
+      modalCardDetailEl.classList.remove('has-emoji-image');
   }
 
   modalCardDetailEl.innerHTML = `
-    <div class="content">${item.text}</div>
+    <div class="content"><p>${item.text}</p></div>
     <div class="footer">
-      <span class="category-tag">${item.emotionLabel}</span>
+      <div class="tag">${item.emotionLabel}</div>
+      <div class="time">• ${timeAgo(item.createdAt || Date.now())}</div>
     </div>
   `;
   
