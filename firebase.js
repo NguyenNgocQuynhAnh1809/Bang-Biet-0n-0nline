@@ -112,3 +112,70 @@ export function listenGratitudes(callback) {
     callback(items);
   });
 }
+
+// Add comment to a note (anonymous)
+export async function addComment(noteId, text) {
+  const clean = text.replace(/\s+/g, " ").trim().slice(0, 500);
+  if (!clean) throw new Error("Empty comment");
+
+  const commentsRef = collection(db, "gratitudes", noteId, "comments");
+  const newCommentRef = doc(commentsRef);
+  
+  await setDoc(newCommentRef, {
+    text: clean,
+    createdAt: serverTimestamp(),
+  });
+  
+  return newCommentRef.id;
+}
+
+// Listen to comments for a note
+export function listenComments(noteId, callback) {
+  const commentsRef = collection(db, "gratitudes", noteId, "comments");
+  const q = query(commentsRef, orderBy("createdAt", "asc"));
+  
+  return onSnapshot(q, (snap) => {
+    const comments = snap.docs.map((d) => ({
+      id: d.id,
+      text: d.data().text || "",
+      createdAt: d.data().createdAt?.toMillis
+        ? d.data().createdAt.toMillis()
+        : Date.now(),
+    }));
+    callback(comments);
+  });
+}
+
+// Add emoji reaction (one per user per note)
+export async function addReaction(noteId, clientId, emojiId) {
+  const reactionRef = doc(db, "gratitudes", noteId, "reactions", clientId);
+  await setDoc(reactionRef, {
+    emojiId,
+    createdAt: serverTimestamp(),
+  });
+}
+
+// Remove emoji reaction
+export async function removeReaction(noteId, clientId, emojiId) {
+  const reactionRef = doc(db, "gratitudes", noteId, "reactions", clientId);
+  await setDoc(reactionRef, {
+    emojiId: null,
+    removedAt: serverTimestamp(),
+  });
+}
+
+// Listen to reactions for a note
+export function listenReactions(noteId, callback) {
+  const reactionsRef = collection(db, "gratitudes", noteId, "reactions");
+  
+  return onSnapshot(reactionsRef, (snap) => {
+    const counts = {};
+    snap.docs.forEach((d) => {
+      const emojiId = d.data().emojiId;
+      if (emojiId) {
+        counts[emojiId] = (counts[emojiId] || 0) + 1;
+      }
+    });
+    callback(counts);
+  });
+}
