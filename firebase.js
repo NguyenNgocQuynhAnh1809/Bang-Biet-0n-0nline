@@ -11,7 +11,7 @@ import {
   query,
   orderBy,
   limit,
-  updateDoc, // <<< SỬA 1: Thêm 'updateDoc' vào đây
+  updateDoc,
 } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
 import { firebaseConfig } from "./firebase-config.js";
@@ -19,7 +19,6 @@ import { firebaseConfig } from "./firebase-config.js";
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Chỉ còn 4 cảm xúc, dùng ảnh PNG bạn cung cấp
 export const EMOTIONS = {
   notgreat: {
     label: "Not Great",
@@ -37,21 +36,11 @@ export const EMOTIONS = {
   },
 };
 
-// Vietnam local date key (YYYY-MM-DD) for daily limit
 export function getDateKey(tz = "Asia/Ho_Chi_Minh") {
   const d = new Date();
-  const y = new Intl.DateTimeFormat("en-CA", {
-    timeZone: tz,
-    year: "numeric",
-  }).format(d);
-  const m = new Intl.DateTimeFormat("en-CA", {
-    timeZone: tz,
-    month: "2-digit",
-  }).format(d);
-  const day = new Intl.DateTimeFormat("en-CA", {
-    timeZone: tz,
-    day: "2-digit",
-  }).format(d);
+  const y = new Intl.DateTimeFormat("en-CA", { timeZone: tz, year: "numeric" }).format(d);
+  const m = new Intl.DateTimeFormat("en-CA", { timeZone: tz, month: "2-digit" }).format(d);
+  const day = new Intl.DateTimeFormat("en-CA", { timeZone: tz, day: "2-digit" }).format(d);
   return `${y}-${m}-${day}`;
 }
 
@@ -83,6 +72,7 @@ export async function addGratitude({
     createdAt: serverTimestamp(),
     clientId: String(clientId || ""),
     dateKey: String(dateKey || getDateKey()),
+    comments: [], // <<< THAY ĐỔI QUAN TRỌNG NHẤT
   };
 
   const docId = `${payload.clientId}_${payload.dateKey}`;
@@ -90,18 +80,10 @@ export async function addGratitude({
   return docId;
 }
 
-// ===== SỬA 2: Thêm hàm updateGratitude vào đây =====
-/**
- * Cập nhật một document trong collection 'gratitudes'.
- * @param {string} id - ID của document cần cập nhật.
- * @param {object} dataToUpdate - Object chứa các trường cần cập nhật (ví dụ: { comments: [...] }).
- */
 export async function updateGratitude(id, dataToUpdate) {
   const docRef = doc(db, "gratitudes", id);
   await updateDoc(docRef, dataToUpdate);
 }
-// =======================================================
-
 
 export function listenGratitudes(callback) {
   const qy = query(
@@ -121,7 +103,7 @@ export function listenGratitudes(callback) {
         createdAt: data.createdAt?.toMillis
           ? data.createdAt.toMillis()
           : Date.now(),
-        comments: data.comments || [], // <<< SỬA 3: Lấy trường 'comments'
+        comments: data.comments || [],
       };
     });
     callback(items);
