@@ -42,30 +42,22 @@
     <div id="noteModal" class="modal" aria-hidden="true">
       <div class="modal-overlay"></div>
       <div class="modal-content">
-        <div class="modal-header">
-          <h2>Chi tiết</h2>
-          <button class="close-modal" aria-label="Đóng">×</button>
-        </div>
         <div class="modal-body">
-          <div id="modalText" class="modal-text"></div>
-          <div id="modalMeta" class="modal-meta"></div>
-          
-          <div class="reactions-section">
-            <h3>Cảm xúc của bạn</h3>
+          <!-- Nội dung thẻ chính bên trái -->
+          <div class="modal-main-card">
+            <div id="modalCardContent" class="modal-card-inner"></div>
+          </div>
+
+          <!-- Phần emoji reactions -->
+          <div class="modal-reactions">
+            <div class="emoji-input-label">Viết bình luận...</div>
             <div id="emojiButtons" class="emoji-row"></div>
           </div>
 
-          <div class="comments-section">
-            <h3>Bình luận</h3>
-            <div id="commentsList" class="comments-list"></div>
-            <div class="comment-form">
-              <textarea 
-                id="commentInput" 
-                placeholder="Ai cười vậy"
-                maxlength="500"
-              ></textarea>
-              <button id="submitComment">Gửi</button>
-            </div>
+          <!-- Phần bình luận bên phải -->
+          <div class="modal-comments-wrapper">
+            <div id="commentsList" class="comments-list-display"></div>
+            <div id="commentsCount" class="comments-count-badge">0 bình luận</div>
           </div>
         </div>
       </div>
