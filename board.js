@@ -17,15 +17,16 @@ const totalEl = document.getElementById("total");
 const modal = document.getElementById("noteModal");
 const modalText = document.getElementById("modalText");
 const modalMeta = document.getElementById("modalMeta");
+const emojiButtons = document.getElementById("emojiButtons");
 const commentsList = document.getElementById("commentsList");
 const commentInput = document.getElementById("commentInput");
 const submitCommentBtn = document.getElementById("submitComment");
-const emojiButtonsContainer = document.getElementById("emojiButtons");
+const closeModalBtn = document.querySelector(".close-modal");
+const modalOverlay = document.querySelector(".modal-overlay");
 
 let currentNoteId = null;
-let currentUserReactions = {}; // Track user's reactions per note
+let currentUserReactions = {}; // Track user's reaction per note
 
-// Chỉ còn 4 cảm xúc
 const orderKeys = ["notgreat", "okay", "good", "great"];
 
 function renderLegend(stats) {
@@ -98,31 +99,56 @@ function renderGrid(items) {
     div.querySelector(".text").textContent = it.text;
     div.style.color = "var(--ink)";
     
-    // Add click handler to open modal
-    div.addEventListener("click", () => openNoteModal(it));
+    // Click to open modal
+    div.addEventListener("click", () => openModal(it));
     
     gridEl.appendChild(div);
   }
   gridEl.setAttribute("aria-busy", "false");
 }
 
-// Render emoji buttons với ảnh
+// Open modal
+function openModal(note) {
+  currentNoteId = note.id;
+  
+  modalText.textContent = note.text;
+  modalMeta.innerHTML = `
+    <span style="width:8px;height:8px;border-radius:50%;background:${
+      note.color || "#eee"
+    };display:inline-block;margin-right:6px;"></span>
+    ${note.emotionLabel || ""} • ${timeAgo(note.createdAt || Date.now())}
+  `;
+  
+  renderEmojiButtons();
+  loadReactions(note.id);
+  loadComments(note.id);
+  
+  modal.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+}
+
+// Close modal
+function closeModal() {
+  modal.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+  currentNoteId = null;
+  commentInput.value = "";
+}
+
+// Render emoji buttons
 function renderEmojiButtons() {
-  emojiButtonsContainer.innerHTML = "";
+  emojiButtons.innerHTML = "";
   
   REACTION_EMOJIS.forEach((emoji) => {
     const btn = document.createElement("button");
     btn.className = "emoji-btn";
     btn.dataset.emojiId = emoji.id;
     btn.innerHTML = `
-      <img src="${emoji.image}" alt="${emoji.name}" class="emoji-img" loading="lazy" />
-      <span class="emoji-count">0</span>
+      <img src="${emoji.image}" alt="${emoji.name}" />
+      <span class="count">0</span>
     `;
-    
-    // Add click handler
     btn.addEventListener("click", () => handleEmojiClick(emoji.id));
-    
-    emojiButtonsContainer.appendChild(btn);
+    emojiButtons.appendChild(btn);
   });
 }
 
@@ -149,108 +175,49 @@ async function handleEmojiClick(emojiId) {
     }
   } catch (error) {
     console.error("Error handling reaction:", error);
-    alert("Lỗi khi thả cảm xúc. Vui lòng thử lại!");
   }
 }
 
-// Open modal with note details
-function openNoteModal(note) {
-  currentNoteId = note.id;
-  
-  modalText.textContent = note.text;
-  modalMeta.innerHTML = `
-    <span class="badge">
-      <span style="width:8px;height:8px;border-radius:50%;background:${
-        note.color || "#eee"
-      };display:inline-block"></span>
-      ${note.emotionLabel || ""}
-    </span>
-    <span aria-hidden="true"> • </span>
-    <span>${timeAgo(note.createdAt || Date.now())}</span>
-  `;
-  
-  modal.setAttribute("aria-hidden", "false");
-  document.body.style.overflow = "hidden";
-  
-  // Render emoji buttons nếu chưa có
-  if (emojiButtonsContainer.children.length === 0) {
-    renderEmojiButtons();
-  }
-  
-  // Load comments and reactions
-  loadComments(note.id);
-  loadReactions(note.id);
-}
-
-// Close modal
-function closeModal() {
-  modal.setAttribute("aria-hidden", "true");
-  document.body.style.overflow = "";
-  currentNoteId = null;
-  commentInput.value = "";
-}
-
-// Load and render comments
-function loadComments(noteId) {
-  listenComments(noteId, (comments) => {
-    commentsList.innerHTML = "";
-    if (comments.length === 0) {
-      commentsList.innerHTML = '<p style="color:#9ca3af;font-size:14px;text-align:center;padding:20px 0;">Chưa có bình luận nào. Hãy là người đầu tiên! 💬</p>';
-      return;
-    }
-    
-    comments.forEach((comment) => {
-      const commentDiv = document.createElement("div");
-      commentDiv.className = "comment-item";
-      commentDiv.innerHTML = `
-        <div class="comment-header">
-          <span class="comment-author">👤 Ẩn danh</span>
-          <span class="comment-time">${timeAgo(comment.createdAt)}</span>
-        </div>
-        <div class="comment-text">${escapeHtml(comment.text)}</div>
-      `;
-      commentsList.appendChild(commentDiv);
-    });
-    
-    // Auto scroll to bottom
-    commentsList.scrollTop = commentsList.scrollHeight;
-  });
-}
-
-// Load and render reactions
+// Load reactions
 function loadReactions(noteId) {
   listenReactions(noteId, (reactions) => {
-    const emojiButtons = emojiButtonsContainer.querySelectorAll(".emoji-btn");
+    const buttons = emojiButtons.querySelectorAll(".emoji-btn");
     const clientId = getClientId();
     
-    emojiButtons.forEach((btn) => {
+    buttons.forEach((btn) => {
       const emojiId = btn.dataset.emojiId;
       const count = reactions[emojiId] || 0;
-      const countSpan = btn.querySelector(".emoji-count");
-      countSpan.textContent = count;
+      btn.querySelector(".count").textContent = count;
       
-      // Check if user has reacted with this emoji
       const userReacted = currentUserReactions[noteId] === emojiId;
       btn.classList.toggle("active", userReacted);
     });
   });
 }
 
-// Get or create client ID for anonymous reactions
-function getClientId() {
-  let clientId = localStorage.getItem("gratitude_client_id");
-  if (!clientId) {
-    clientId = "user_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9);
-    localStorage.setItem("gratitude_client_id", clientId);
-  }
-  return clientId;
-}
-
-// Escape HTML to prevent XSS
-function escapeHtml(text) {
-  const div = document.createElement("div");
-  div.textContent = text;
-  return div.innerHTML;
+// Load comments
+function loadComments(noteId) {
+  listenComments(noteId, (comments) => {
+    commentsList.innerHTML = "";
+    
+    if (comments.length === 0) {
+      commentsList.innerHTML = '<p class="no-comments">Chưa có bình luận</p>';
+      return;
+    }
+    
+    comments.forEach((comment) => {
+      const div = document.createElement("div");
+      div.className = "comment";
+      div.innerHTML = `
+        <div class="comment-header">
+          <span class="author">Ẩn danh</span>
+          <span class="time">${timeAgo(comment.createdAt)}</span>
+        </div>
+        <div class="comment-text">${escapeHtml(comment.text)}</div>
+      `;
+      commentsList.appendChild(div);
+    });
+  });
 }
 
 // Submit comment
@@ -259,33 +226,36 @@ submitCommentBtn.addEventListener("click", async () => {
   if (!text || !currentNoteId) return;
   
   submitCommentBtn.disabled = true;
-  submitCommentBtn.textContent = "Đang gửi...";
-  
   try {
     await addComment(currentNoteId, text);
     commentInput.value = "";
-    submitCommentBtn.textContent = "Gửi";
   } catch (error) {
-    alert("Lỗi khi gửi bình luận: " + error.message);
-    submitCommentBtn.textContent = "Gửi";
+    alert("Lỗi: " + error.message);
   } finally {
     submitCommentBtn.disabled = false;
   }
 });
 
-// Allow Enter to submit (Shift+Enter for new line)
-commentInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter" && !e.shiftKey) {
-    e.preventDefault();
-    submitCommentBtn.click();
+// Get client ID
+function getClientId() {
+  let id = localStorage.getItem("gratitude_client_id");
+  if (!id) {
+    id = "user_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem("gratitude_client_id", id);
   }
-});
+  return id;
+}
+
+// Escape HTML
+function escapeHtml(text) {
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}
 
 // Close modal handlers
-document.querySelector(".close-modal").addEventListener("click", closeModal);
-document.querySelector(".modal-overlay").addEventListener("click", closeModal);
-
-// Close modal on Escape key
+closeModalBtn.addEventListener("click", closeModal);
+modalOverlay.addEventListener("click", closeModal);
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && modal.getAttribute("aria-hidden") === "false") {
     closeModal();
