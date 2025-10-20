@@ -415,6 +415,7 @@ body.bg {
   gap: 8px;
   transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
   overflow: hidden;
+  cursor: pointer;
 }
 /* translucent overlay to let page background show through */
 .note::before {
@@ -676,41 +677,43 @@ font-weight: 700;
   position: relative;
 }
 
-/* Emoji nền của thẻ: fallback qua data-emoji (ký tự) */
-.gratitude-item-modal::before {
-  content: attr(data-emoji);
-  position: absolute;
-  bottom: -10px;
-  right: -6px;
-  font-size: 120px;
-  opacity: 0.08;
-  z-index: 1;
-  pointer-events: none;
-  line-height: 1;
-  transform: translateZ(0);
-  display: block;
+.gratitude-item-modal .footer .tag {
+    font-weight: 600;
+}
+.gratitude-item-modal .footer .time {
+    color: var(--muted);
 }
 
-/* Nếu muốn dùng ảnh emoji thay cho ký tự, set --modal-emoji-url: url('/path/to.png') trong :root
-   và thêm class .has-emoji-image lên .gratitude-item-modal để bật ::after */
+/* SỬA ĐỔI: Thay thế pseudo-element ::before bằng ::after để hiển thị hình ảnh emoji */
+/* Bỏ ::before vì nó dùng để hiển thị ký tự text, không phải hình ảnh */
+.gratitude-item-modal::before {
+  content: none;
+}
+
+/* Dùng ::after để hiển thị hình ảnh từ biến CSS --modal-emoji-url */
 .gratitude-item-modal::after {
   content: "";
   position: absolute;
-  right: 12px;
-  bottom: 8px;
-  width: 140px;
-  height: 140px;
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-  opacity: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   pointer-events: none;
   z-index: 0;
-  transition: opacity 0.12s;
+  opacity: 0; /* Ẩn mặc định */
   background-image: var(--modal-emoji-url);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 60%; /* Kích thước của emoji */
+  transition: opacity 0.2s ease-in-out;
 }
+
+/* Kích hoạt ::after khi có class .has-emoji-image */
 .gratitude-item-modal.has-emoji-image::after {
-  opacity: 0.12;
+  opacity: 0.15; /* Độ mờ của emoji */
 }
 
 /* Khu vực nhập bình luận */
@@ -776,6 +779,9 @@ font-weight: 700;
   flex-shrink: 0;
   margin-top: -5px; /* Căn chỉnh avatar cho đẹp hơn */
 }
+.comment-avatar img {
+    border-radius: 50%;
+}
 
 .comment-content {
   background-color: #f0f2f5; /* Màu nền giống Facebook */
@@ -796,19 +802,19 @@ font-weight: 700;
 }
 
 /* Thêm màu sắc cho thẻ trong modal (class sẽ được set bởi JS) */
-.gratitude-item-modal.emo-great {
+.gratitude-item-modal.great {
   background-color: var(--great-bg);
   color: var(--great-text);
 }
-.gratitude-item-modal.emo-good {
+.gratitude-item-modal.good {
   background-color: var(--good-bg);
   color: var(--good-text);
 }
-.gratitude-item-modal.emo-okay {
+.gratitude-item-modal.okay {
   background-color: var(--okay-bg);
   color: var(--okay-text);
 }
-.gratitude-item-modal.emo-notgreat {
+.gratitude-item-modal.not-great {
   background-color: var(--not-great-bg);
   color: var(--not-great-text);
 }
