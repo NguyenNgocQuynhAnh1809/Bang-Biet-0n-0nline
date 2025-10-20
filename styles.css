@@ -796,19 +796,19 @@ font-weight: 700;
 }
 
 /* Thêm màu sắc cho thẻ trong modal (class sẽ được set bởi JS) */
-.gratitude-item-modal.great {
+.gratitude-item-modal.emo-great {
   background-color: var(--great-bg);
   color: var(--great-text);
 }
-.gratitude-item-modal.good {
+.gratitude-item-modal.emo-good {
   background-color: var(--good-bg);
   color: var(--good-text);
 }
-.gratitude-item-modal.okay {
+.gratitude-item-modal.emo-okay {
   background-color: var(--okay-bg);
   color: var(--okay-text);
 }
-.gratitude-item-modal.not-great {
+.gratitude-item-modal.emo-notgreat {
   background-color: var(--not-great-bg);
   color: var(--not-great-text);
 }
