@@ -15,20 +15,19 @@ const totalEl = document.getElementById("total");
 
 // Modal elements
 const modal = document.getElementById("noteModal");
-const modalText = document.getElementById("modalText");
-const modalMeta = document.getElementById("modalMeta");
+const modalCardContent = document.getElementById("modalCardContent");
 const emojiButtons = document.getElementById("emojiButtons");
 const commentsList = document.getElementById("commentsList");
-const commentInput = document.getElementById("commentInput");
-const submitCommentBtn = document.getElementById("submitComment");
-const closeModalBtn = document.querySelector(".close-modal");
+const commentsCount = document.getElementById("commentsCount");
 const modalOverlay = document.querySelector(".modal-overlay");
 
 let currentNoteId = null;
-let currentUserReactions = {}; // Track user's reaction per note
+let currentUserReactions = {};
+let currentNote = null;
 
 const orderKeys = ["notgreat", "okay", "good", "great"];
 
+// Render legend và bar (giữ nguyên)
 function renderLegend(stats) {
   legendEl.innerHTML = "";
   for (const key of orderKeys) {
@@ -68,6 +67,7 @@ function timeAgo(ts) {
   return `${d} ngày trước`;
 }
 
+// Render grid
 function renderGrid(items) {
   gridEl.innerHTML = "";
   for (const it of items) {
@@ -77,224 +77,193 @@ function renderGrid(items) {
 
     const watermarkHtml =
       it.emotionKey && EMOTIONS[it.emotionKey] && EMOTIONS[it.emotionKey].img
-        ? `<div class="mascot-watermark"><img src="${
-            EMOTIONS[it.emotionKey].img
-          }" alt="" loading="lazy" /></div>`
+        ? `<div class="mascot-watermark"><img src="${EMOTIONS[it.emotionKey].img}" alt="" loading="lazy" /></div>`
         : "";
 
     div.innerHTML = `
       ${watermarkHtml}
-      <div class="text"></div>
+      <div class="text">${it.text || ""}</div>
       <div class="meta">
-        <span class="badge">
-          <span style="width:8px;height:8px;border-radius:50%;background:${
-            it.color || "#eee"
-          };display:inline-block"></span>
-          ${it.emotionLabel || ""}
-        </span>
-        <span aria-hidden="true">•</span>
-        <span>${timeAgo(it.createdAt || Date.now())}</span>
+        ${
+          it.emotionLabel
+            ? `<span class="badge"><span style="color:${it.color}">●</span> ${it.emotionLabel}</span>`
+            : ""
+        }
+        <span>• ${timeAgo(it.createdAt)}</span>
       </div>
     `;
-    div.querySelector(".text").textContent = it.text;
-    div.style.color = "var(--ink)";
-    
-    // Click to open modal
+
+    // Click vào thẻ để mở modal
     div.addEventListener("click", () => openModal(it));
     
     gridEl.appendChild(div);
   }
-  gridEl.setAttribute("aria-busy", "false");
 }
 
-// Open modal
+// Mở modal với thông tin thẻ
 function openModal(note) {
   currentNoteId = note.id;
+  currentNote = note;
   
-  modalText.textContent = note.text;
-  modalMeta.innerHTML = `
-    <span style="width:8px;height:8px;border-radius:50%;background:${
-      note.color || "#eee"
-    };display:inline-block;margin-right:6px;"></span>
-    ${note.emotionLabel || ""} • ${timeAgo(note.createdAt || Date.now())}
+  // Render nội dung thẻ chính
+  const modalMain = document.querySelector(".modal-main-card");
+  modalMain.className = "modal-main-card";
+  if (note.emotionKey) {
+    modalMain.classList.add("emo-" + note.emotionKey);
+  }
+
+  // Tạo watermark lớn phía sau
+  const emotion = EMOTIONS[note.emotionKey];
+  const watermarkHtml = emotion && emotion.img
+    ? `<div class="modal-mascot-bg"><img src="${emotion.img}" alt="" /></div>`
+    : "";
+
+  const badgeHtml = emotion
+    ? `<div class="modal-emotion-badge" style="background: ${emotion.color}; color: white;">
+         ${emotion.label}
+       </div>`
+    : "";
+
+  modalCardContent.innerHTML = `
+    ${watermarkHtml}
+    ${badgeHtml}
+    <div style="position: relative; z-index: 1;">${note.text || ""}</div>
   `;
-  
+
+  // Render emoji reactions
   renderEmojiButtons();
-  loadReactions(note.id);
-  loadComments(note.id);
-  
+
+  // Listen comments
+  listenComments(note.id, renderComments);
+
+  // Listen reactions
+  listenReactions(note.id, (reactions) => {
+    updateEmojiCounts(reactions);
+  });
+
+  // Hiện modal
   modal.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
 }
 
-// Close modal
+// Render emoji buttons
+function renderEmojiButtons() {
+  emojiButtons.innerHTML = "";
+  
+  REACTION_EMOJIS.forEach((emoji) => {
+    const btn = document.createElement("button");
+    btn.className = "emoji-btn";
+    btn.dataset.emojiId = emoji.id;
+    
+    btn.innerHTML = `
+      <img src="${emoji.image}" alt="${emoji.name}" />
+      <span class="emoji-count" style="display: none;">0</span>
+    `;
+
+    btn.addEventListener("click", () => handleEmojiClick(emoji));
+    
+    emojiButtons.appendChild(btn);
+  });
+}
+
+// Xử lý click emoji
+async function handleEmojiClick(emoji) {
+  if (!currentNoteId) return;
+
+  const userReaction = currentUserReactions[currentNoteId];
+  
+  if (userReaction === emoji.id) {
+    // Bỏ reaction
+    await removeReaction(currentNoteId, emoji.id);
+    delete currentUserReactions[currentNoteId];
+  } else {
+    // Thêm hoặc thay đổi reaction
+    if (userReaction) {
+      await removeReaction(currentNoteId, userReaction);
+    }
+    await addReaction(currentNoteId, emoji.id);
+    currentUserReactions[currentNoteId] = emoji.id;
+  }
+}
+
+// Update emoji counts
+function updateEmojiCounts(reactions) {
+  const counts = {};
+  reactions.forEach((r) => {
+    counts[r.emojiId] = (counts[r.emojiId] || 0) + 1;
+  });
+
+  REACTION_EMOJIS.forEach((emoji) => {
+    const btn = emojiButtons.querySelector(`[data-emoji-id="${emoji.id}"]`);
+    if (btn) {
+      const countEl = btn.querySelector(".emoji-count");
+      const count = counts[emoji.id] || 0;
+      
+      if (count > 0) {
+        countEl.textContent = count;
+        countEl.style.display = "block";
+      } else {
+        countEl.style.display = "none";
+      }
+
+      // Highlight nếu user đã react
+      const userReaction = currentUserReactions[currentNoteId];
+      btn.classList.toggle("active", userReaction === emoji.id);
+    }
+  });
+}
+
+// Render comments
+function renderComments(comments) {
+  if (!comments || comments.length === 0) {
+    commentsList.innerHTML = '<div class="no-comments">Chưa có bình luận nào</div>';
+    commentsCount.textContent = "0 bình luận";
+    return;
+  }
+
+  commentsCount.textContent = `${comments.length} bình luận`;
+  
+  commentsList.innerHTML = "";
+  comments.forEach((comment) => {
+    const emoji = REACTION_EMOJIS.find((e) => e.id === comment.emojiId);
+    
+    const div = document.createElement("div");
+    div.className = "comment-item";
+    div.innerHTML = `
+      <div class="comment-emoji">
+        <img src="${emoji ? emoji.image : "./emoji1.png"}" alt="" />
+      </div>
+      <div class="comment-content">
+        <div class="comment-text">${comment.text || ""}</div>
+      </div>
+    `;
+    
+    commentsList.appendChild(div);
+  });
+}
+
+// Đóng modal
 function closeModal() {
   modal.setAttribute("aria-hidden", "true");
   document.body.style.overflow = "";
   currentNoteId = null;
-  commentInput.value = "";
+  currentNote = null;
 }
 
-// Render emoji buttons
-function renderEmojiButtons(noteId, reactions) {
-  emojiButtonsContainer.innerHTML = "";
-  
-  REACTION_EMOJIS.forEach(emoji => {
-    const count = reactions[emoji.id] || 0;
-    const hasReacted = currentUserReactions[noteId]?.[emoji.id] || false;
-    
-    const btn = document.createElement("button");
-    btn.className = `emoji-btn ${hasReacted ? 'active' : ''}`;
-    btn.setAttribute('data-emoji-id', emoji.id);
-    
-    // Hiển thị ảnh emoji thay vì text
-    btn.innerHTML = `
-      <img src="${emoji.image}" alt="${emoji.name}" class="emoji-img" />
-      ${count > 0 ? `<span class="emoji-count">${count}</span>` : ''}
-    `;
-    
-    btn.addEventListener('click', async () => {
-      if (hasReacted) {
-        await removeReaction(noteId, emoji.id);
-      } else {
-        await addReaction(noteId, emoji.id);
-      }
-    });
-    
-    emojiButtonsContainer.appendChild(btn);
-  });
-}
-
-// Handle emoji click
-async function handleEmojiClick(emojiId) {
-  if (!currentNoteId) return;
-  
-  const clientId = getClientId();
-  const currentReaction = currentUserReactions[currentNoteId];
-  
-  try {
-    if (currentReaction === emojiId) {
-      // Remove reaction
-      await removeReaction(currentNoteId, clientId, emojiId);
-      delete currentUserReactions[currentNoteId];
-    } else {
-      // Remove old reaction if exists
-      if (currentReaction) {
-        await removeReaction(currentNoteId, clientId, currentReaction);
-      }
-      // Add new reaction
-      await addReaction(currentNoteId, clientId, emojiId);
-      currentUserReactions[currentNoteId] = emojiId;
-    }
-  } catch (error) {
-    console.error("Error handling reaction:", error);
-  }
-}
-
-// Load reactions
-function loadReactions(noteId) {
-  listenReactions(noteId, (reactions) => {
-    const buttons = emojiButtons.querySelectorAll(".emoji-btn");
-    const clientId = getClientId();
-    
-    buttons.forEach((btn) => {
-      const emojiId = btn.dataset.emojiId;
-      const count = reactions[emojiId] || 0;
-      btn.querySelector(".count").textContent = count;
-      
-      const userReacted = currentUserReactions[noteId] === emojiId;
-      btn.classList.toggle("active", userReacted);
-    });
-  });
-}
-
-// Load comments
-function loadComments(noteId) {
-  listenComments(noteId, (comments) => {
-    commentsList.innerHTML = "";
-    
-    if (comments.length === 0) {
-      commentsList.innerHTML = '<p class="no-comments">Chưa có bình luận</p>';
-      return;
-    }
-    
-    comments.forEach((comment) => {
-      const div = document.createElement("div");
-      div.className = "comment";
-      div.innerHTML = `
-        <div class="comment-header">
-          <span class="author">Ẩn danh</span>
-          <span class="time">${timeAgo(comment.createdAt)}</span>
-        </div>
-        <div class="comment-text">${escapeHtml(comment.text)}</div>
-      `;
-      commentsList.appendChild(div);
-    });
-  });
-}
-
-// Submit comment
-submitCommentBtn.addEventListener("click", async () => {
-  const text = commentInput.value.trim();
-  if (!text || !currentNoteId) return;
-  
-  submitCommentBtn.disabled = true;
-  try {
-    await addComment(currentNoteId, text);
-    commentInput.value = "";
-  } catch (error) {
-    alert("Lỗi: " + error.message);
-  } finally {
-    submitCommentBtn.disabled = false;
-  }
-});
-
-// Get client ID
-function getClientId() {
-  let id = localStorage.getItem("gratitude_client_id");
-  if (!id) {
-    id = "user_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9);
-    localStorage.setItem("gratitude_client_id", id);
-  }
-  return id;
-}
-
-// Escape HTML
-function escapeHtml(text) {
-  const div = document.createElement("div");
-  div.textContent = text;
-  return div.innerHTML;
-}
-
-// Close modal handlers
-closeModalBtn.addEventListener("click", closeModal);
+// Event listeners
 modalOverlay.addEventListener("click", closeModal);
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && modal.getAttribute("aria-hidden") === "false") {
-    closeModal();
-  }
-});
 
-// Main listener
+// Listen gratitudes
 listenGratitudes((items) => {
-  const stats = { notgreat: 0, okay: 0, good: 0, great: 0 };
+  const stats = {};
+  for (const k of orderKeys) stats[k] = 0;
   for (const it of items) {
-    if (stats[it.emotionKey] !== undefined) stats[it.emotionKey]++;
+    if (it.emotionKey && stats[it.emotionKey] !== undefined) {
+      stats[it.emotionKey]++;
+    }
   }
   renderLegend(stats);
   renderBar(stats, items.length);
   renderGrid(items);
-});
-
-document.querySelectorAll('a[aria-label="Facebook cá nhân"]').forEach((a) => {
-  a.addEventListener("click", (e) => {
-    const href = a.getAttribute("href");
-    if (href) {
-      setTimeout(() => {
-        try {
-          window.open(href, "_blank", "noopener");
-        } catch {}
-      }, 10);
-    }
-  });
+  gridEl.setAttribute("aria-busy", "false");
 });
