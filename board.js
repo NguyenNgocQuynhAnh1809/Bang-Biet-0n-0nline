@@ -100,7 +100,6 @@ function renderCommentsAndReactions(item) {
         const commentItem = document.createElement("div");
         commentItem.className = "comment-item";
         
-        // THAY ĐỔI: Bỏ "icons/"
         const reactionHtml = comment.reaction
             ? `<div class="comment-reaction"><img src="${comment.reaction}.png" alt=""></div>`
             : '';
@@ -114,27 +113,37 @@ function renderCommentsAndReactions(item) {
         `;
         commentListEl.appendChild(commentItem);
 
-        // Đếm reactions
         if (comment.reaction) {
             reactionCounts[comment.reaction] = (reactionCounts[comment.reaction] || 0) + 1;
         }
     });
 
-    // Hiển thị tổng số reactions
+    // SỬA ĐỔI: Quay lại cách hiển thị tooltip
     reactionSummaryEl.innerHTML = '';
     const sortedReactions = Object.keys(reactionCounts).sort((a,b) => reactionCounts[b] - reactionCounts[a]);
     
+    let totalReactionCount = 0;
     sortedReactions.forEach(reactionId => {
         const count = reactionCounts[reactionId];
+        totalReactionCount += count;
         if (count > 0) {
             const reactionCountEl = document.createElement('div');
             reactionCountEl.className = 'reaction-count-item';
-            reactionCountEl.setAttribute('data-tooltip', `${count}`); 
-            // THAY ĐỔI: Bỏ "icons/"
+            // Tooltip sẽ được xử lý bằng CSS :hover
+            reactionCountEl.setAttribute('data-tooltip', count); 
             reactionCountEl.innerHTML = `<img src="${reactionId}.png" alt="">`;
             reactionSummaryEl.appendChild(reactionCountEl);
         }
     });
+
+    // Thêm tổng số lượng vào cuối
+    if (totalReactionCount > 0) {
+        const totalCountEl = document.createElement('span');
+        totalCountEl.className = 'summary-count';
+        totalCountEl.textContent = totalReactionCount;
+        reactionSummaryEl.appendChild(totalCountEl);
+    }
+
 
     commentCountEl.textContent = `${comments.length} bình luận`;
 }
