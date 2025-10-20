@@ -1,24 +1,24 @@
 // Cấu hình emoji reactions
-// Thay đổi đường dẫn ảnh theo ảnh bạn upload
+// Ảnh 1, 2, 3, 4 tương ứng với like, love, haha, thương
 export const REACTION_EMOJIS = [
   {
-    id: "emoji1",
+    id: "like",
     name: "Thích",
-    image: "./emoji1.png", 
+    image: "./1.png", 
   },
   {
-    id: "emoji2",
+    id: "love",
     name: "Yêu",
-    image: "./emoji2.png", 
+    image: "./2.png", 
   },
   {
-    id: "emoji3",
-    name: "Vui",
-    image: "./emoji3.png", 
+    id: "haha",
+    name: "Haha",
+    image: "./3.png", 
   },
   {
-    id: "emoji4",
-    name: "Tuyệt vời",
-    image: "./emoji4.png", 
+    id: "thuong",
+    name: "Thương",
+    image: "./4.png", 
   },
 ];
