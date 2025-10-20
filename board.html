@@ -62,19 +62,24 @@
                         <div class="comment-input-wrapper">
                             <input type="text" id="comment-input" placeholder="Viết bình luận...">
                             <div class="reaction-icons">
-                                <span class="react-icon">❤️</span>
-                                <span class="react-icon">👍</span>
-                                <span class="react-icon">😂</span>
-                                <span class="react-icon">😍</span>
+                                
+                                <button class="react-btn" data-reaction="1"><img src="1.png" alt="Thích"></button>
+                                <button class="react-btn" data-reaction="2"><img src="2.png" alt="Yêu thích"></button>
+                                <button class="react-btn" data-reaction="3"><img src="3.png" alt="Haha"></button>
+                                <button class="react-btn" data-reaction="4"><img src="4.png" alt="Wow"></button>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="comment-modal-right">
                     <div id="comment-list">
-                     
+                        <!-- Các bình luận sẽ được chèn vào đây bởi JS -->
                     </div>
-                    <div class="comment-footer">
+                     <!-- THAY ĐỔI: Thêm khu vực hiển thị reactions và tổng bình luận -->
+                    <div class="comment-summary">
+                        <div id="reaction-summary" class="reaction-summary">
+                           <!-- Reaction counts sẽ được chèn vào đây -->
+                        </div>
                         <span id="comment-count">0 bình luận</span>
                     </div>
                 </div>
