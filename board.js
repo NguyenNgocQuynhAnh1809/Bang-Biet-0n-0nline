@@ -125,7 +125,11 @@ function openCommentModal(item) {
   modalCardDetailEl.className = `gratitude-item-modal ${emotionClass}`;
   modalCardDetailEl.dataset.emoji = mascotImg ? '' : '❓'; // Nếu không có ảnh, dùng emoji
   if (mascotImg) {
-    modalCardDetailEl.style.setProperty('--mascot-watermark-url', `url(${mascotImg})`);
+    modalCardDetailEl.style.setProperty('--modal-emoji-url', `url(${mascotImg})`);
+    modalCardDetailEl.classList.add('has-emoji-image');
+  } else {
+    modalCardDetailEl.style.setProperty('--modal-emoji-url', '');
+    modalCardDetailEl.classList.remove('has-emoji-image');
   }
 
   modalCardDetailEl.innerHTML = `
