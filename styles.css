@@ -531,403 +531,263 @@ body.bg {
   font-weight: 700;
 }
 
-/* Modal styles - Giống Facebook */
-.modal {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity 0.2s, visibility 0.2s;
-}
-
-.modal[aria-hidden="false"] {
-  visibility: visible;
-  opacity: 1;
-}
-
-.modal-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(2px);
-}
-
+/* Modal layout giống ảnh 2 */
 .modal-content {
   position: relative;
-  background: white;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 560px;
-  max-height: 85vh;
-  overflow-y: auto;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-}
-
-.modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  border-bottom: 1px solid #e4e6eb;
-}
-
-.modal-header h2 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 700;
-  color: #050505;
-}
-
-.close-modal {
-  width: 32px;
-  height: 32px;
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 24px;
-  line-height: 1;
-  color: #65676b;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: transparent;
+  border-radius: 0;
+  width: 95%;
+  max-width: 1100px;
+  max-height: 90vh;
+  overflow: visible;
+  box-shadow: none;
   padding: 0;
 }
 
-.close-modal:hover {
-  background: #f2f3f5;
-}
-
 .modal-body {
-  padding: 20px;
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 20px;
+  padding: 0;
+  position: relative;
 }
 
-.modal-text {
-  font-size: 15px;
-  line-height: 1.4;
-  margin-bottom: 8px;
-  color: #050505;
+/* Thẻ chính bên trái */
+.modal-main-card {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  position: relative;
+  min-height: 400px;
 }
 
-.modal-meta {
-  font-size: 13px;
-  color: #65676b;
-  margin-bottom: 20px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #e4e6eb;
-  display: flex;
+/* Nội dung thẻ với watermark */
+.modal-card-inner {
+  position: relative;
+  z-index: 1;
+  font-size: 18px;
+  line-height: 1.8;
+  color: #333;
+}
+
+/* Watermark emoji lớn phía sau */
+.modal-mascot-bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.15;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.modal-mascot-bg img {
+  width: 280px;
+  height: 280px;
+  object-fit: contain;
+}
+
+/* Badge cảm xúc trong modal */
+.modal-emotion-badge {
+  display: inline-flex;
   align-items: center;
-}
-
-/* Reactions section */
-.reactions-section {
-  margin-bottom: 24px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #e4e6eb;
-}
-
-.reactions-section h3 {
-  font-size: 15px;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 13px;
   font-weight: 600;
-  margin: 0 0 16px 0;
-  color: #050505;
+  margin-bottom: 12px;
+}
+
+/* Màu nền cho từng loại cảm xúc */
+.modal-main-card.emo-great {
+  background: linear-gradient(135deg, #ffc0cb 0%, #ffb6c1 100%);
+}
+
+.modal-main-card.emo-good {
+  background: linear-gradient(135deg, #fde364 0%, #fdd835 100%);
+}
+
+.modal-main-card.emo-okay {
+  background: linear-gradient(135deg, #b8dfcb 0%, #a7d7ba 100%);
+}
+
+.modal-main-card.emo-notgreat {
+  background: linear-gradient(135deg, #e3c4df 0%, #d8b4d4 100%);
+}
+
+/* Phần emoji reactions */
+.modal-reactions {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  margin-top: 16px;
+  grid-column: 1;
+}
+
+.emoji-input-label {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 12px;
+  font-weight: 500;
 }
 
 .emoji-row {
   display: flex;
   justify-content: space-around;
-  align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .emoji-btn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 8px;
-  border-radius: 8px;
-  transition: background 0.2s;
-}
-
-.emoji-btn:hover {
-  background: #f2f3f5;
-}
-
-.emoji-btn.active {
-  background: #e7f3ff;
-}
-
-.emoji-btn img {
-  width: 48px;
-  height: 48px;
-  object-fit: contain;
+  background: white;
+  border: 3px solid #e0e0e0;
   border-radius: 50%;
-}
-
-.emoji-btn .count {
-  font-size: 14px;
-  font-weight: 600;
-  color: #050505;
-}
-
-.emoji-btn.active .count {
-  color: #0866ff;
-}
-
-/* Comments section */
-.comments-section h3 {
-  font-size: 15px;
-  font-weight: 600;
-  margin: 0 0 12px 0;
-  color: #050505;
-}
-
-.comments-list {
-  margin-bottom: 16px;
-  max-height: 240px;
-  overflow-y: auto;
-}
-
-.no-comments {
-  text-align: center;
-  color: #65676b;
-  font-size: 14px;
-  padding: 20px 0;
-}
-
-.comment {
-  background: #f0f2f5;
-  border-radius: 16px;
-  padding: 10px 14px;
-  margin-bottom: 8px;
-}
-
-.comment-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 4px;
-}
-
-.comment-header .author {
-  font-size: 13px;
-  font-weight: 600;
-  color: #050505;
-}
-
-.comment-header .time {
-  font-size: 12px;
-  color: #65676b;
-}
-
-.comment-text {
-  font-size: 15px;
-  line-height: 1.3;
-  color: #050505;
-}
-
-.comment-form {
-  display: flex;
-  gap: 8px;
-  align-items: flex-end;
-}
-
-.comment-form textarea {
-  flex: 1;
-  border: 1px solid #ccd0d5;
-  border-radius: 18px;
-  padding: 10px 14px;
-  font-size: 15px;
-  font-family: inherit;
-  resize: none;
-  min-height: 40px;
-  max-height: 100px;
-}
-
-.comment-form textarea:focus {
-  outline: none;
-  border-color: #0866ff;
-}
-
-.comment-form button {
-  background: #0866ff;
-  color: white;
-  border: none;
-  border-radius: 16px;
-  padding: 10px 20px;
-  font-size: 15px;
-  font-weight: 600;
   cursor: pointer;
-  height: 40px;
-}
-
-.comment-form button:hover {
-  background: #0952cc;
-}
-
-.comment-form button:disabled {
-  background: #e4e6eb;
-  color: #bcc0c4;
-  cursor: not-allowed;
-}
-
-/* Make cards clickable */
-.note {
-  cursor: pointer;
-}
-
-/* Modal emoji reactions */
-.reactions-section {
-  margin: 1.5rem 0;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 12px;
-}
-
-.reactions-section h3 {
-  font-size: 0.9rem;
-  margin-bottom: 0.75rem;
-  color: #666;
-  font-weight: 600;
-}
-
-.emoji-row {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-.emoji-btn {
-  position: relative;
+  padding: 0;
+  width: 56px;
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem;
-  background: white;
-  border: 2px solid #e0e0e0;
-  border-radius: 50%;
-  cursor: pointer;
   transition: all 0.2s ease;
-  width: 50px;
-  height: 50px;
+  position: relative;
+  overflow: visible;
 }
 
 .emoji-btn:hover {
-  transform: scale(1.1);
-  border-color: #ff9999;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transform: scale(1.15);
+  border-color: #ffc0cb;
+  box-shadow: 0 4px 12px rgba(255, 192, 203, 0.4);
 }
 
 .emoji-btn.active {
-  border-color: #ff6b9d;
-  background: #ffe4ed;
-  transform: scale(1.05);
+  border-color: #ff69b4;
+  background: #fff0f5;
+  transform: scale(1.1);
 }
 
-.emoji-img {
-  width: 32px;
-  height: 32px;
+.emoji-btn img {
+  width: 42px;
+  height: 42px;
   object-fit: contain;
 }
 
+/* Số đếm emoji */
 .emoji-count {
   position: absolute;
-  bottom: -5px;
-  right: -5px;
-  background: #ff6b9d;
+  bottom: -8px;
+  right: -8px;
+  background: #ff69b4;
   color: white;
-  font-size: 0.7rem;
-  padding: 2px 6px;
-  border-radius: 10px;
+  font-size: 11px;
   font-weight: bold;
-  min-width: 18px;
+  padding: 3px 7px;
+  border-radius: 12px;
+  min-width: 22px;
   text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
-/* Comments section */
-.comments-section {
-  margin-top: 1.5rem;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 12px;
-}
-
-.comments-section h3 {
-  font-size: 0.9rem;
-  margin-bottom: 0.75rem;
-  color: #666;
-  font-weight: 600;
-}
-
-.comments-list {
-  max-height: 200px;
-  overflow-y: auto;
-  margin-bottom: 1rem;
-}
-
-.comment-item {
-  padding: 0.75rem;
+/* Phần bình luận bên phải */
+.modal-comments-wrapper {
   background: white;
-  border-radius: 8px;
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-  color: #333;
-}
-
-.comment-form {
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  grid-column: 2;
+  grid-row: 1 / span 2;
   display: flex;
-  gap: 0.5rem;
-  align-items: flex-start;
+  flex-direction: column;
+  max-height: 600px;
 }
 
-.comment-form textarea {
+.comments-list-display {
   flex: 1;
-  padding: 0.75rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  resize: vertical;
-  min-height: 60px;
-  font-family: inherit;
+  overflow-y: auto;
+  margin-bottom: 16px;
+  padding-right: 8px;
 }
 
-.comment-form button {
-  padding: 0.75rem 1.5rem;
-  background: #ff6b9d;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
+/* Từng bình luận */
+.comment-item {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  animation: slideIn 0.3s ease;
 }
 
-.comment-form button:hover {
-  background: #ff5088;
-  transform: translateY(-1px);
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Modal styling improvements */
-.modal-text {
-  font-size: 1.1rem;
-  line-height: 1.6;
-  color: #333;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.7);
+.comment-emoji {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.comment-emoji img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.comment-content {
+  flex: 1;
+  background: #f5f5f5;
   border-radius: 12px;
-  margin-bottom: 1rem;
+  padding: 12px;
 }
 
-.modal-meta {
-  font-size: 0.85rem;
-  color: #888;
-  padding: 0.5rem 1rem;
+.comment-text {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+  word-wrap: break-word;
+}
+
+/* Badge số bình luận */
+.comments-count-badge {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background: #ff69b4;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
+}
+
+/* Responsive cho mobile */
+@media (max-width: 900px) {
+  .modal-body {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .modal-comments-wrapper {
+    grid-column: 1;
+    grid-row: auto;
+    max-height: 300px;
+  }
+
+  .modal-main-card {
+    padding: 24px;
+  }
+}
+
+/* Đóng modal khi click overlay */
+.modal-overlay {
+  cursor: pointer;
 }
