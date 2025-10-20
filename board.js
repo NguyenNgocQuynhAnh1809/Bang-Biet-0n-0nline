@@ -64,7 +64,6 @@ function renderGrid(items) {
   for (const it of items) {
     const div = document.createElement("article");
     div.className = "note";
-    // Thêm data-id để xác định item nào được click
     div.dataset.id = it.id; 
     
     if (it.emotionKey) div.classList.add("emo-" + it.emotionKey);
@@ -97,7 +96,6 @@ function renderGrid(items) {
   gridEl.setAttribute("aria-busy", "false");
 }
 
-// BẮT ĐẦU: Các hàm xử lý Modal
 function renderComments(item) {
   const comments = item.comments || [];
   const mascotImg = EMOTIONS[item.emotionKey]?.img;
@@ -108,7 +106,7 @@ function renderComments(item) {
     commentItem.className = "comment-item";
     commentItem.innerHTML = `
       <div class="comment-avatar">
-        <img src="${mascotImg}" alt="" style="width: 32px; height: 32px;" />
+        <img src="${mascotImg}" alt="" />
       </div>
       <div class="comment-content">${commentText}</div>
     `;
@@ -119,13 +117,11 @@ function renderComments(item) {
 
 function openCommentModal(item) {
   currentItem = item;
-  // SỬA ĐỔI: Sử dụng emotionKey trực tiếp (ví dụ: 'great') và xử lý 'notgreat' thành 'not-great' cho CSS
   const emotionClass = item.emotionKey === 'notgreat' ? 'not-great' : item.emotionKey;
   const mascotImg = EMOTIONS[item.emotionKey]?.img;
   
   modalCardDetailEl.className = `gratitude-item-modal ${emotionClass}`;
   
-  // SỬA ĐỔI: Sử dụng biến CSS để đặt hình nền emoji và thêm class để kích hoạt nó
   if (mascotImg) {
     modalCardDetailEl.style.setProperty('--modal-emoji-url', `url(${mascotImg})`);
     modalCardDetailEl.classList.add('has-emoji-image');
@@ -133,11 +129,15 @@ function openCommentModal(item) {
       modalCardDetailEl.classList.remove('has-emoji-image');
   }
 
+  // SỬA ĐỔI: Cập nhật cấu trúc HTML cho footer để khớp với thiết kế mới
   modalCardDetailEl.innerHTML = `
     <div class="content"><p>${item.text}</p></div>
     <div class="footer">
-      <div class="tag">${item.emotionLabel}</div>
-      <div class="time">• ${timeAgo(item.createdAt || Date.now())}</div>
+      <span class="tag">
+        <span class="dot" style="background-color: ${item.color || '#eee'}"></span>
+        ${item.emotionLabel}
+      </span>
+      <span class="time">• ${timeAgo(item.createdAt || Date.now())}</span>
     </div>
   `;
   
@@ -160,13 +160,10 @@ async function handleAddComment() {
     const commentText = commentInputEl.value.trim();
     if (commentText === '' || !currentItem) return;
 
-    // Tạo mảng comments mới
     const newComments = currentItem.comments ? [...currentItem.comments, commentText] : [commentText];
     
     try {
-        // Cập nhật lại document trong Firebase
         await updateGratitude(currentItem.id, { comments: newComments });
-        // Firebase listener sẽ tự động cập nhật UI, nhưng để phản hồi nhanh hơn, ta có thể cập nhật ngay lập tức
         currentItem.comments = newComments;
         renderComments(currentItem);
         commentInputEl.value = '';
@@ -176,12 +173,10 @@ async function handleAddComment() {
     }
 }
 
-// Thêm sự kiện click cho grid để mở modal
 gridEl.addEventListener('click', (e) => {
   const noteEl = e.target.closest('article.note');
   if (noteEl) {
     const itemId = noteEl.dataset.id;
-    // Tìm item tương ứng trong danh sách đã tải
     const allItems = window.gratitudeItems || [];
     const item = allItems.find(it => it.id === itemId);
     if (item) {
@@ -190,7 +185,6 @@ gridEl.addEventListener('click', (e) => {
   }
 });
 
-// Thêm sự kiện để đóng modal
 closeModalBtn.addEventListener('click', closeCommentModal);
 commentModalEl.addEventListener('click', (e) => {
   if (e.target === commentModalEl) {
@@ -198,21 +192,16 @@ commentModalEl.addEventListener('click', (e) => {
   }
 });
 
-// Thêm sự kiện để gửi bình luận
 commentInputEl.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') {
     handleAddComment();
   }
 });
-// KẾT THÚC: Các hàm xử lý Modal
-
 
 listenGratitudes((items) => {
-  // Lưu danh sách items vào biến toàn cục để truy cập khi click
   window.gratitudeItems = items;
 
   const stats = { notgreat: 0, okay: 0, good: 0, great: 0 };
-  // Dùng forEach an toàn hơn
   items.forEach(it => {
     if (it && it.emotionKey && stats.hasOwnProperty(it.emotionKey)) {
       stats[it.emotionKey]++;
@@ -223,20 +212,17 @@ listenGratitudes((items) => {
   renderBar(stats, items.length);
   renderGrid(items);
 
-  // Cập nhật modal nếu nó đang mở
   if (currentItem) {
       const updatedItem = items.find(it => it && it.id === currentItem.id);
       if (updatedItem) {
-          currentItem = updatedItem; // Cập nhật state của item hiện tại
-          renderComments(updatedItem); // Vẽ lại comment với dữ liệu mới
+          currentItem = updatedItem;
+          renderComments(updatedItem);
       } else {
-          // Nếu item không còn tồn tại (ví dụ: bị xóa), đóng modal lại
           closeCommentModal();
       }
   }
 });
 
-// Ensure Facebook icon opens the link (defensive handler)
 document.querySelectorAll('a[aria-label="Facebook cá nhân"]').forEach((a) => {
   a.addEventListener("click", (e) => {
     const href = a.getAttribute("href");
