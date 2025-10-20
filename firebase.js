@@ -11,6 +11,7 @@ import {
   query,
   orderBy,
   limit,
+  updateDoc, // <<< SỬA 1: Thêm 'updateDoc' vào đây
 } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
 import { firebaseConfig } from "./firebase-config.js";
@@ -89,6 +90,19 @@ export async function addGratitude({
   return docId;
 }
 
+// ===== SỬA 2: Thêm hàm updateGratitude vào đây =====
+/**
+ * Cập nhật một document trong collection 'gratitudes'.
+ * @param {string} id - ID của document cần cập nhật.
+ * @param {object} dataToUpdate - Object chứa các trường cần cập nhật (ví dụ: { comments: [...] }).
+ */
+export async function updateGratitude(id, dataToUpdate) {
+  const docRef = doc(db, "gratitudes", id);
+  await updateDoc(docRef, dataToUpdate);
+}
+// =======================================================
+
+
 export function listenGratitudes(callback) {
   const qy = query(
     collection(db, "gratitudes"),
@@ -107,6 +121,7 @@ export function listenGratitudes(callback) {
         createdAt: data.createdAt?.toMillis
           ? data.createdAt.toMillis()
           : Date.now(),
+        comments: data.comments || [], // <<< SỬA 3: Lấy trường 'comments'
       };
     });
     callback(items);
