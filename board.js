@@ -1,12 +1,24 @@
-import { listenGratitudes, EMOTIONS } from "./firebase.js";
+import { listenGratitudes, EMOTIONS, updateGratitude } from "./firebase.js"; // Giả sử có hàm updateGratitude
 
 const gridEl = document.getElementById("grid");
 const legendEl = document.getElementById("legend");
 const barEl = document.getElementById("bar");
 const totalEl = document.getElementById("total");
 
+// BẮT ĐẦU: Lấy các phần tử HTML của Modal
+const commentModalEl = document.getElementById("comment-modal");
+const closeModalBtn = document.querySelector(".close-comment-modal");
+const modalCardDetailEl = document.getElementById("modal-card-detail");
+const commentListEl = document.getElementById("comment-list");
+const commentCountEl = document.getElementById("comment-count");
+const commentInputEl = document.getElementById("comment-input");
+// KẾT THÚC: Lấy các phần tử HTML của Modal
+
 // Chỉ còn 4 cảm xúc
 const orderKeys = ["notgreat", "okay", "good", "great"];
+
+// Biến để lưu trữ item hiện tại đang được xem trong modal
+let currentItem = null;
 
 function renderLegend(stats) {
   legendEl.innerHTML = "";
@@ -52,11 +64,11 @@ function renderGrid(items) {
   for (const it of items) {
     const div = document.createElement("article");
     div.className = "note";
-    // Add emotion class so CSS controls translucent background
+    // Thêm data-id để xác định item nào được click
+    div.dataset.id = it.id; 
+    
     if (it.emotionKey) div.classList.add("emo-" + it.emotionKey);
 
-    // mascot img if available (use EMOTIONS map)
-    // watermark mascot centered
     const watermarkHtml =
       it.emotionKey && EMOTIONS[it.emotionKey] && EMOTIONS[it.emotionKey].img
         ? `<div class="mascot-watermark"><img src="${
@@ -79,14 +91,120 @@ function renderGrid(items) {
       </div>
     `;
     div.querySelector(".text").textContent = it.text;
-    // ensure readable text: for light-ish color vars we use dark ink
     div.style.color = "var(--ink)";
     gridEl.appendChild(div);
   }
   gridEl.setAttribute("aria-busy", "false");
 }
 
+// BẮT ĐẦU: Các hàm xử lý Modal
+function renderComments(item) {
+  const comments = item.comments || [];
+  const mascotImg = EMOTIONS[item.emotionKey]?.img;
+
+  commentListEl.innerHTML = "";
+  comments.forEach(commentText => {
+    const commentItem = document.createElement("div");
+    commentItem.className = "comment-item";
+    commentItem.innerHTML = `
+      <div class="comment-avatar">
+        <img src="${mascotImg}" alt="" style="width: 32px; height: 32px;" />
+      </div>
+      <div class="comment-content">${commentText}</div>
+    `;
+    commentListEl.appendChild(commentItem);
+  });
+  commentCountEl.textContent = `${comments.length} bình luận`;
+}
+
+function openCommentModal(item) {
+  currentItem = item;
+  const emotionClass = `emo-${item.emotionKey}`;
+  const mascotImg = EMOTIONS[item.emotionKey]?.img;
+  
+  modalCardDetailEl.className = `gratitude-item-modal ${emotionClass}`;
+  modalCardDetailEl.dataset.emoji = mascotImg ? '' : '❓'; // Nếu không có ảnh, dùng emoji
+  if (mascotImg) {
+    modalCardDetailEl.style.setProperty('--mascot-watermark-url', `url(${mascotImg})`);
+  }
+
+  modalCardDetailEl.innerHTML = `
+    <div class="content">${item.text}</div>
+    <div class="footer">
+      <span class="category-tag">${item.emotionLabel}</span>
+    </div>
+  `;
+  
+  renderComments(item);
+
+  commentModalEl.style.display = 'flex';
+  setTimeout(() => commentModalEl.classList.add('show'), 10);
+}
+
+function closeCommentModal() {
+  commentModalEl.classList.remove('show');
+  setTimeout(() => {
+    commentModalEl.style.display = 'none';
+    commentInputEl.value = '';
+    currentItem = null;
+  }, 300);
+}
+
+async function handleAddComment() {
+    const commentText = commentInputEl.value.trim();
+    if (commentText === '' || !currentItem) return;
+
+    // Tạo mảng comments mới
+    const newComments = currentItem.comments ? [...currentItem.comments, commentText] : [commentText];
+    
+    try {
+        // Cập nhật lại document trong Firebase
+        await updateGratitude(currentItem.id, { comments: newComments });
+        // Firebase listener sẽ tự động cập nhật UI, nhưng để phản hồi nhanh hơn, ta có thể cập nhật ngay lập tức
+        currentItem.comments = newComments;
+        renderComments(currentItem);
+        commentInputEl.value = '';
+    } catch (error) {
+        console.error("Lỗi khi thêm bình luận:", error);
+        alert("Không thể thêm bình luận. Vui lòng thử lại.");
+    }
+}
+
+// Thêm sự kiện click cho grid để mở modal
+gridEl.addEventListener('click', (e) => {
+  const noteEl = e.target.closest('article.note');
+  if (noteEl) {
+    const itemId = noteEl.dataset.id;
+    // Tìm item tương ứng trong danh sách đã tải
+    const allItems = window.gratitudeItems || [];
+    const item = allItems.find(it => it.id === itemId);
+    if (item) {
+      openCommentModal(item);
+    }
+  }
+});
+
+// Thêm sự kiện để đóng modal
+closeModalBtn.addEventListener('click', closeCommentModal);
+commentModalEl.addEventListener('click', (e) => {
+  if (e.target === commentModalEl) {
+    closeCommentModal();
+  }
+});
+
+// Thêm sự kiện để gửi bình luận
+commentInputEl.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    handleAddComment();
+  }
+});
+// KẾT THÚC: Các hàm xử lý Modal
+
+
 listenGratitudes((items) => {
+  // Lưu danh sách items vào biến toàn cục để truy cập khi click
+  window.gratitudeItems = items;
+
   const stats = { notgreat: 0, okay: 0, good: 0, great: 0 };
   for (const it of items) {
     if (stats[it.emotionKey] !== undefined) stats[it.emotionKey]++;
@@ -94,15 +212,22 @@ listenGratitudes((items) => {
   renderLegend(stats);
   renderBar(stats, items.length);
   renderGrid(items);
+
+  // Nếu modal đang mở, cập nhật nó với dữ liệu mới
+  if (currentItem) {
+      const updatedItem = items.find(it => it.id === currentItem.id);
+      if (updatedItem) {
+          renderComments(updatedItem);
+          currentItem = updatedItem; // Cập nhật state
+      }
+  }
 });
 
 // Ensure Facebook icon opens the link (defensive handler)
 document.querySelectorAll('a[aria-label="Facebook cá nhân"]').forEach((a) => {
   a.addEventListener("click", (e) => {
-    // default anchor should work; this ensures a new tab opens safely
     const href = a.getAttribute("href");
     if (href) {
-      // let the browser handle target=_blank; if prevented, open via window.open
       setTimeout(() => {
         try {
           window.open(href, "_blank", "noopener");
