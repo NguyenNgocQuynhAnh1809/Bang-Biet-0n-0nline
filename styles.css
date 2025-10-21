@@ -553,7 +553,7 @@ body.bg {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh; /* <<< ĐÂY LÀ THAY ĐỔI ĐỂ SỬA LỖI */
+  height: 100%;
   background-color: rgba(0, 0, 0, 0.6); /* Nền đen mờ */
   display: flex;
   justify-content: center;
@@ -935,6 +935,23 @@ body.bg {
     border-left: none;
     padding-left: 0;
     max-height: 280px;
+  }
+
+  /* Điều chỉnh padding cho nội dung modal trên màn hình nhỏ */
+  .comment-modal-content {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Giảm padding hơn nữa trên màn hình rất nhỏ */
+  .comment-modal-content {
+    padding: 20px 15px;
+  }
+
+  /* Tăng kích thước font chữ cho dễ đọc */
+  .gratitude-item-modal .content {
+    font-size: 18px;
   }
 }
 
