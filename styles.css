@@ -938,4 +938,23 @@ body.bg {
   }
 }
 
+/* == SỬA LỖI CHO MOBILE == */
+/* Thêm media query cho màn hình nhỏ hơn (điện thoại) */
+@media (max-width: 480px) {
+  .comment-modal-content {
+    padding: 20px 15px; /* Giảm padding trên màn hình nhỏ */
+    max-height: 85vh; /* Giới hạn chiều cao */
+    overflow-y: auto; /* Cho phép cuộn toàn bộ modal nếu cần */
+  }
+  .close-comment-modal {
+    top: 8px;
+    right: 10px;
+  }
+  .comment-modal-right {
+    max-height: 300px; /* Tăng nhẹ chiều cao vùng comment */
+  }
+  .gratitude-item-modal .content {
+    font-size: 18px; /* Giảm cỡ chữ nội dung chính trong modal */
+  }
+}
 /* ==== KẾT THÚC KHỐI MÃ CSS CHO MODAL BÌNH LUẬN ==== */
