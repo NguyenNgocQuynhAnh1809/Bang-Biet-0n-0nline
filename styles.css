@@ -931,10 +931,14 @@ body.bg {
     flex-direction: column;
     gap: 18px;
   }
+
+  /* Đảm bảo các cột chiếm toàn bộ chiều rộng và loại bỏ min-width */
   .comment-modal-left,
   .comment-modal-right {
-    min-width: 0; /* Cho phép các cột co lại */
+    flex-basis: 100%; /* Chiếm toàn bộ chiều rộng */
+    min-width: 0;     /* Ghi đè min-width */
   }
+
   .comment-modal-right {
     border-left: none;
     padding-left: 0;
@@ -942,23 +946,17 @@ body.bg {
   }
 }
 
-/* == SỬA LỖI CHO MOBILE == */
-/* Thêm media query cho màn hình nhỏ hơn (điện thoại) */
+/* Tinh chỉnh cho màn hình di động rất nhỏ */
 @media (max-width: 480px) {
   .comment-modal-content {
-    padding: 20px 15px; /* Giảm padding trên màn hình nhỏ */
-    max-height: 85vh; /* Giới hạn chiều cao */
-    overflow-y: auto; /* Cho phép cuộn toàn bộ modal nếu cần */
+    padding: 20px 15px; /* Giảm padding */
+    max-height: 85vh;   /* Giới hạn chiều cao an toàn */
+    overflow-y: auto;   /* Cho phép cuộn toàn bộ modal */
   }
+
   .close-comment-modal {
     top: 8px;
     right: 10px;
-  }
-  .comment-modal-right {
-    max-height: 300px; /* Tăng nhẹ chiều cao vùng comment */
-  }
-  .gratitude-item-modal .content {
-    font-size: 18px; /* Giảm cỡ chữ nội dung chính trong modal */
   }
 }
 /* ==== KẾT THÚC KHỐI MÃ CSS CHO MODAL BÌNH LUẬN ==== */
