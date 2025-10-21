@@ -931,6 +931,10 @@ body.bg {
     flex-direction: column;
     gap: 18px;
   }
+  .comment-modal-left,
+  .comment-modal-right {
+    min-width: 0; /* Cho phép các cột co lại */
+  }
   .comment-modal-right {
     border-left: none;
     padding-left: 0;
