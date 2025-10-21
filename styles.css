@@ -49,16 +49,19 @@
   --modal-emoji-url: "";
 }
 
-* {
-  box-sizing: border-box; /* <<< THÊM DÒNG NÀY ĐỂ SỬA LỖI TRÀN LỀ */
+/* SỬA LỖI TRÀN LỀ: Áp dụng box-sizing cho tất cả phần tử */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
+
 html,
 body {
   margin: 0;
 }
 body.bg {
   min-height: 100svh;
-  /* SỬA Ở ĐÂY: Bỏ "./" trong url() nếu cần, hoặc dùng đường dẫn tuyệt đối cho Github Pages */
   background: linear-gradient(
       rgba(255, 255, 255, 0.6),
       rgba(255, 255, 255, 0.6)
@@ -553,15 +556,17 @@ body.bg {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh; /* Sửa lỗi chiều cao trên mobile */
-  background-color: rgba(0, 0, 0, 0.6); /* Nền đen mờ */
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start; /* Thay đổi: căn lề trên để dễ cuộn */
   z-index: 1001;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0s 0.3s linear;
+  overflow-y: auto; /* Thêm: cho phép cuộn theo chiều dọc */
+  padding: 40px 0; /* Thêm: tạo khoảng đệm trên dưới khi cuộn */
 }
 
 .modal-overlay.show {
@@ -581,7 +586,7 @@ body.bg {
   position: relative;
   transform: scale(0.95);
   transition: transform 0.3s ease;
-  overflow: hidden; /* <<< THÊM DÒNG NÀY ĐỂ GIỮ NỘI DUNG BÊN TRONG */
+  overflow: hidden; /* Giữ nội dung bên trong */
 }
 
 .modal-overlay.show .comment-modal-content {
