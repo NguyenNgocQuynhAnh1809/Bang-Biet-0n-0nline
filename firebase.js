@@ -38,9 +38,18 @@ export const EMOTIONS = {
 
 export function getDateKey(tz = "Asia/Ho_Chi_Minh") {
   const d = new Date();
-  const y = new Intl.DateTimeFormat("en-CA", { timeZone: tz, year: "numeric" }).format(d);
-  const m = new Intl.DateTimeFormat("en-CA", { timeZone: tz, month: "2-digit" }).format(d);
-  const day = new Intl.DateTimeFormat("en-CA", { timeZone: tz, day: "2-digit" }).format(d);
+  const y = new Intl.DateTimeFormat("en-CA", {
+    timeZone: tz,
+    year: "numeric",
+  }).format(d);
+  const m = new Intl.DateTimeFormat("en-CA", {
+    timeZone: tz,
+    month: "2-digit",
+  }).format(d);
+  const day = new Intl.DateTimeFormat("en-CA", {
+    timeZone: tz,
+    day: "2-digit",
+  }).format(d);
   return `${y}-${m}-${day}`;
 }
 
@@ -104,6 +113,7 @@ export function listenGratitudes(callback) {
           ? data.createdAt.toMillis()
           : Date.now(),
         comments: data.comments || [],
+        reactions: data.reactions || {}, // {userId: reactionId}
       };
     });
     callback(items);

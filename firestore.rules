@@ -16,12 +16,14 @@ service cloud.firestore {
       && docId == request.resource.data.clientId + '_' + request.resource.data.dateKey
       && !exists(/databases/$(database)/documents/gratitudes/$(docId));
 
-      // QUY TẮC MỚI ĐÃ SỬA LỖI: Chỉ kiểm tra các trường không thay đổi
+      // QUY TẮC MỚI ĐÃ SỬA LỖI: Cho phép cập nhật comments và reactions
       allow update: if 
-        // 1. Yêu cầu cập nhật chỉ được chứa trường 'comments'.
-        request.writeFields.hasOnly(['comments'])
-        // 2. Kiểm tra xem trường 'comments' được gửi lên có phải là một danh sách (List) hay không.
-        && request.resource.data.comments is list;
+        // 1. Yêu cầu cập nhật chỉ được chứa trường 'comments' và/hoặc 'reactions'.
+        request.writeFields.hasOnly(['comments', 'reactions'])
+        // 2. Nếu có 'comments', phải là một danh sách (List)
+        && (!request.writeFields.hasAny(['comments']) || request.resource.data.comments is list)
+        // 3. Nếu có 'reactions', phải là một object (map)
+        && (!request.writeFields.hasAny(['reactions']) || request.resource.data.reactions is map);
 
       // Giữ nguyên: Không cho phép xóa
       allow delete: if false;

@@ -1,5 +1,76 @@
 import { listenGratitudes, EMOTIONS, updateGratitude } from "./firebase.js";
 
+// Danh sách từ ngữ không phù hợp
+const BAD_WORDS = [
+  "địt", "lọt khe", "dume", "duma", "đụ mẹ", "đụ má", "đụ", "djt", "d!t", "d1t", "đjt", "đ1t",
+  "cặc", "cak", "cak*", "c*k", "c@k", "cặk", "cặc*", "cặk*", "cạk", "cạk*",
+  "lồn", "l0n", "l*n", "l@n", "lồn*", "l0z", "loz", "l0lz", "l*nz", "l*n*", "l0n*",
+  "clm", "cl", "clo", "clq", "clgt", "clmm", "clmz", "clmn", "clq*", "clmm*",
+  "d*tm*", "dmm", "dm", "dcm", "dmm*", "dm*", "dcm*", "đmm", "đm", "đcm", "đmm*", "đm*", "đcm*",
+  "loz", "l0z", "l0zz", "l0zz*", "lozz", "lozz*",
+  "buồi", "buoi", "bùi", "buồi*", "buoi*", "bùi*",
+  "đụ", "đuỵt", "đụ*", "đuỵt*",
+  "chó", "dmm", "cho*", "ch0", "ch0*", "chó*", "ch0z", "ch0z*",
+  "đĩ", "di~", "dĩ", "đĩ*", "di~*", "dĩ*",
+  "đéo", "déo", "đéo*", "déo*", "đell", "đell*", "dell", "dell*",
+  "vãi", "vãi*", "vcl", "vkl", "vl", "vkl*", "vcl*", "vl*",
+  "cc", "c*c", "c@c", "cc*", "cặc", "cặk", "cạk",
+  "fuck", "f*ck", "fck", "f*ck*", "fck*", "fuk", "fuk*",
+  "shit", "sh!t", "sh1t", "sh*t", "sh1t*", "shit*",
+  "bitch", "b!tch", "b1tch", "b*tch", "bitch*",
+  "ngu", "ngu*", "nguu", "nguu*", "ngốc", "ngốc*", "ngok", "ngok*",
+  "khốn nạn", "khon nan", "khonnan", "khốn nạn*", "khonnan*",
+  "mẹ mày", "me may", "mẹ mày*", "me may*", "mẹ m*", "me m*",
+  "bố mày", "bo may", "bố mày*", "bo may*", "bố m*", "bo m*",
+  "con mẹ mày", "con me may", "con mẹ mày*", "con me may*",
+  "thằng chó", "thang cho", "thằng chó*", "thang cho*",
+  "thằng lồn", "thang lon", "thằng lồn*", "thang lon*",
+  "thằng ngu", "thang ngu", "thằng ngu*", "thang ngu*",
+  "thằng đĩ", "thang di~", "thằng đĩ*", "thang di~*",
+  "thằng cặc", "thang cak", "thằng cặc*", "thang cak*",
+  "ml", "mẹ kiếp", "mẹ mìn", "mẹ cha", "mẹ cha mày", "mẹ cha mi", "mẹ cha nó", "mẹ cha tao",
+  "bố láo", "bố láo*", "bố láo toét", "bố láo toét*", "bố đời", "bố đời*",
+  "vô học", "vô học*", "vô văn hóa", "vô văn hoá", "vô văn hóa*", "vô văn hoá*",
+  "phò", "phò*", "phò phạch", "phò phạch*",
+  "dốt", "dốt*", "dốt nát", "dốt nát*",
+  "đần", "đần*", "đần độn", "đần độn*",
+  "óc chó", "óc cho", "óc chó*", "óc cho*", "óc lợn", "óc lợn*",
+  "bựa", "bựa*", "bựa vãi", "bựa vãi*",
+  "rảnh chó", "rảnh cho", "rảnh chó*", "rảnh cho*",
+  "dơ", "dơ*", "dơ bẩn", "dơ bẩn*", "bẩn", "bẩn*", "bẩn thỉu", "bẩn thỉu*",
+  "xàm", "xàm*", "xàm lol", "xàm lol*",
+  "tởm", "tởm*", "tởm lợm", "tởm lợm*",
+  "má m", "mẹ m", "má m*",
+  "vô liêm sỉ", "vô liêm sỉ*",
+  "đồ chó", "đồ chó*", "đồ ngu", "đồ ngu*", "đồ rác", "đồ rác*",
+  "rác rưởi", "rác rưởi*",
+  "đồ khốn", "đồ khốn*", "đồ khốn nạn", "đồ kh*n n*n",
+  "đồ mất dạy", "đồ m*t d*y", "mất dạy", "m*t d*y",
+  "đồ điên", "đồ điên*", "chó đẻ", "địt mẹ",
+  "đồ thần kinh", "đồ thần kinh*",
+  "đồ biến thái", "đồ biến thái*", "biến thái", "biến thái*",
+  "đồ bệnh hoạn", "đồ bệnh hoạn*", "bệnh hoạn", "bệnh hoạn*",
+  "đồ dở hơi", "đồ dở hơi*", "dở hơi", "dở hơi*",
+  "đồ dở người", "dở người", "dở người*",
+  "đồ ngu xuẩn", "stupid", "ngu xuẩn", "ngu ngốc",
+  "đồ đầu bò", "óc bò", "đầu bò", "óc heo", "óc lợn", "óc chó", "óc tôm",
+  "rắn độc", "rắn", "thất học", "ngu dốt",
+  "giả tạo", "giả dối",
+  "đồ đầu đất", "đồ đầu đất*", "đầu đất", "đầu đất*",
+  "đồ đầu gỗ", "đồ đầu gỗ*", "đầu gỗ", "đầu gỗ*",
+  "đồ đầu tôm", "đồ đầu tôm*", "đầu tôm", "đầu tôm*",
+  "đồ đầu heo", "đồ đầu heo*", "đầu heo", "đầu heo*",
+  "đồ đầu lợn", "đồ đầu lợn*", "đầu lợn", "đầu lợn*",
+  "đồ đầu trâu", "đồ đầu trâu*", "đầu trâu", "đầu trâu*",
+  "đồ đầu chó", "đồ đầu chó*",
+];
+
+// Hàm kiểm tra có chứa từ không phù hợp không
+function containsBadWords(text) {
+  const lower = text.toLowerCase().trim();
+  return BAD_WORDS.some((word) => lower.includes(word));
+}
+
 const gridEl = document.getElementById("grid");
 const legendEl = document.getElementById("legend");
 const barEl = document.getElementById("bar");
@@ -18,6 +89,20 @@ const orderKeys = ["notgreat", "okay", "good", "great"];
 
 let currentItem = null;
 let selectedReaction = null;
+let currentUserId = null; // Sử dụng để track user hiện tại
+
+// Tạo userId duy nhất cho mỗi người dùng (lưu vào localStorage)
+function getUserId() {
+  if (!currentUserId) {
+    currentUserId = localStorage.getItem("userId");
+    if (!currentUserId) {
+      currentUserId =
+        "user_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem("userId", currentUserId);
+    }
+  }
+  return currentUserId;
+}
 
 // --- RENDER FUNCTIONS ---
 
@@ -62,14 +147,17 @@ function timeAgo(ts) {
 
 function renderGrid(items) {
   gridEl.innerHTML = "";
-  items.forEach(it => {
+  items.forEach((it) => {
     const div = document.createElement("article");
     div.className = "note";
     div.dataset.id = it.id;
     if (it.emotionKey) div.classList.add("emo-" + it.emotionKey);
 
-    const watermarkHtml = it.emotionKey && EMOTIONS[it.emotionKey]?.img
-        ? `<div class="mascot-watermark"><img src="${EMOTIONS[it.emotionKey].img}" alt="" loading="lazy" /></div>`
+    const watermarkHtml =
+      it.emotionKey && EMOTIONS[it.emotionKey]?.img
+        ? `<div class="mascot-watermark"><img src="${
+            EMOTIONS[it.emotionKey].img
+          }" alt="" loading="lazy" /></div>`
         : "";
 
     div.innerHTML = `
@@ -77,7 +165,9 @@ function renderGrid(items) {
       <div class="text"></div>
       <div class="meta">
         <span class="badge">
-          <span style="width:8px;height:8px;border-radius:50%;background:${it.color || "#eee"};display:inline-block"></span>
+          <span style="width:8px;height:8px;border-radius:50%;background:${
+            it.color || "#eee"
+          };display:inline-block"></span>
           ${it.emotionLabel || ""}
         </span>
         <span aria-hidden="true">•</span>
@@ -91,162 +181,219 @@ function renderGrid(items) {
 }
 
 function renderCommentsAndReactions(item) {
-    const comments = item.comments || [];
-    const mascotImg = EMOTIONS[item.emotionKey]?.img;
-    const reactionCounts = {};
+  const comments = item.comments || [];
+  const mascotImg = EMOTIONS[item.emotionKey]?.img;
+  const reactions = item.reactions || {};
+  const userId = getUserId();
 
-    commentListEl.innerHTML = "";
-    comments.forEach(comment => {
-        const commentItem = document.createElement("div");
-        commentItem.className = "comment-item";
-        
-        // THAY ĐỔI: Không hiển thị reaction riêng lẻ bên cạnh bình luận nữa
-        commentItem.innerHTML = `
+  // Đếm số lượng mỗi loại reaction
+  const reactionCounts = {};
+  Object.values(reactions).forEach((reactionId) => {
+    reactionCounts[reactionId] = (reactionCounts[reactionId] || 0) + 1;
+  });
+
+  commentListEl.innerHTML = "";
+  comments.forEach((comment) => {
+    const commentItem = document.createElement("div");
+    commentItem.className = "comment-item";
+
+    // THAY ĐỔI: Không hiển thị reaction riêng lẻ bên cạnh bình luận nữa
+    commentItem.innerHTML = `
             <div class="comment-avatar"><img src="${mascotImg}" alt="" /></div>
             <div class="comment-content-wrapper">
                 <div class="comment-content">${comment.text}</div>
             </div>
         `;
-        commentListEl.appendChild(commentItem);
+    commentListEl.appendChild(commentItem);
+  });
 
-        if (comment.reaction) {
-            reactionCounts[comment.reaction] = (reactionCounts[comment.reaction] || 0) + 1;
-        }
-    });
+  // SỬA ĐỔI: Hiển thị reactions của bài viết (không phải của comment)
+  reactionSummaryEl.innerHTML = "";
+  const sortedReactions = Object.keys(reactionCounts).sort(
+    (a, b) => reactionCounts[b] - reactionCounts[a]
+  );
 
-    // SỬA ĐỔI: Giữ nguyên logic hiển thị tóm tắt reaction ở dưới
-    reactionSummaryEl.innerHTML = '';
-    const sortedReactions = Object.keys(reactionCounts).sort((a,b) => reactionCounts[b] - reactionCounts[a]);
-    
-    let totalReactionCount = 0;
-    sortedReactions.forEach(reactionId => {
-        const count = reactionCounts[reactionId];
-        totalReactionCount += count;
-        if (count > 0) {
-            const reactionCountEl = document.createElement('div');
-            reactionCountEl.className = 'reaction-count-item';
-            reactionCountEl.setAttribute('data-tooltip', count); 
-            reactionCountEl.innerHTML = `<img src="${reactionId}.png" alt="">`;
-            reactionSummaryEl.appendChild(reactionCountEl);
-        }
-    });
-
-    if (totalReactionCount > 0) {
-        const totalCountEl = document.createElement('span');
-        totalCountEl.className = 'summary-count';
-        totalCountEl.textContent = totalReactionCount;
-        reactionSummaryEl.appendChild(totalCountEl);
+  let totalReactionCount = 0;
+  sortedReactions.forEach((reactionId) => {
+    const count = reactionCounts[reactionId];
+    totalReactionCount += count;
+    if (count > 0) {
+      const reactionCountEl = document.createElement("div");
+      reactionCountEl.className = "reaction-count-item";
+      reactionCountEl.setAttribute("data-tooltip", count);
+      reactionCountEl.innerHTML = `<img src="${reactionId}.png" alt="">`;
+      reactionSummaryEl.appendChild(reactionCountEl);
     }
+  });
 
-    commentCountEl.textContent = `${comments.length} bình luận`;
+  if (totalReactionCount > 0) {
+    const totalCountEl = document.createElement("span");
+    totalCountEl.className = "summary-count";
+    totalCountEl.textContent = totalReactionCount;
+    reactionSummaryEl.appendChild(totalCountEl);
+  }
+
+  commentCountEl.textContent = `${comments.length} bình luận`;
+
+  // Cập nhật trạng thái đã chọn của user hiện tại
+  const userReaction = reactions[userId];
+  console.log("User reaction:", userReaction, "All reactions:", reactions);
+  reactionBtns.forEach((btn) => {
+    if (btn.dataset.reaction === userReaction) {
+      btn.classList.add("selected");
+      console.log("Selected button:", btn.dataset.reaction);
+    } else {
+      btn.classList.remove("selected");
+    }
+  });
 }
-
 
 // --- MODAL & EVENT HANDLERS ---
 
 function openCommentModal(item) {
   currentItem = item;
-  const emotionClass = item.emotionKey === 'notgreat' ? 'not-great' : item.emotionKey;
+  const emotionClass =
+    item.emotionKey === "notgreat" ? "not-great" : item.emotionKey;
   const mascotImg = EMOTIONS[item.emotionKey]?.img;
-  
+
   modalCardDetailEl.className = `gratitude-item-modal ${emotionClass}`;
-  
+
   if (mascotImg) {
-    modalCardDetailEl.style.setProperty('--modal-emoji-url', `url(${mascotImg})`);
-    modalCardDetailEl.classList.add('has-emoji-image');
+    modalCardDetailEl.style.setProperty(
+      "--modal-emoji-url",
+      `url(${mascotImg})`
+    );
+    modalCardDetailEl.classList.add("has-emoji-image");
   } else {
-    modalCardDetailEl.classList.remove('has-emoji-image');
+    modalCardDetailEl.classList.remove("has-emoji-image");
   }
 
   modalCardDetailEl.innerHTML = `
     <div class="content"><p>${item.text}</p></div>
     <div class="footer">
       <span class="tag">
-        <span class="dot" style="background-color: ${item.color || '#eee'}"></span>
+        <span class="dot" style="background-color: ${
+          item.color || "#eee"
+        }"></span>
         ${item.emotionLabel}
       </span>
       <span class="time">• ${timeAgo(item.createdAt || Date.now())}</span>
     </div>
   `;
-  
+
   renderCommentsAndReactions(item);
 
-  commentModalEl.style.display = 'flex';
-  setTimeout(() => commentModalEl.classList.add('show'), 10);
+  commentModalEl.style.display = "flex";
+  setTimeout(() => commentModalEl.classList.add("show"), 10);
 }
 
 function closeCommentModal() {
-  commentModalEl.classList.remove('show');
+  commentModalEl.classList.remove("show");
   setTimeout(() => {
-    commentModalEl.style.display = 'none';
-    commentInputEl.value = '';
+    commentModalEl.style.display = "none";
+    commentInputEl.value = "";
     currentItem = null;
-    selectedReaction = null;
-    reactionBtns.forEach(btn => btn.classList.remove('selected'));
   }, 300);
 }
 
 async function handleAddComment() {
-    const commentText = commentInputEl.value.trim();
-    if (commentText === '' || !currentItem) return;
+  const commentText = commentInputEl.value.trim();
+  if (commentText === "" || !currentItem) return;
 
-    const newComment = {
-        text: commentText,
-        reaction: selectedReaction 
-    };
+  // Kiểm tra bad words
+  if (containsBadWords(commentText)) {
+    alert("❌ Bình luận chứa từ ngữ không phù hợp. Vui lòng sử dụng ngôn từ lịch sự hơn.");
+    commentInputEl.focus();
+    return;
+  }
 
-    const newComments = currentItem.comments ? [...currentItem.comments, newComment] : [newComment];
-    
-    try {
-        await updateGratitude(currentItem.id, { comments: newComments });
-        currentItem.comments = newComments;
-        renderCommentsAndReactions(currentItem);
-        
-        commentInputEl.value = '';
-        selectedReaction = null;
-        reactionBtns.forEach(btn => btn.classList.remove('selected'));
+  const newComment = {
+    text: commentText,
+  };
 
-    } catch (error) {
-        console.error("Lỗi khi thêm bình luận:", error);
-        alert("Không thể thêm bình luận. Vui lòng thử lại.");
-    }
+  const newComments = currentItem.comments
+    ? [...currentItem.comments, newComment]
+    : [newComment];
+
+  try {
+    await updateGratitude(currentItem.id, { comments: newComments });
+    currentItem.comments = newComments;
+    renderCommentsAndReactions(currentItem);
+
+    commentInputEl.value = "";
+  } catch (error) {
+    console.error("Lỗi khi thêm bình luận:", error);
+    alert("Không thể thêm bình luận. Vui lòng thử lại.");
+  }
 }
 
 // --- EVENT LISTENERS ---
 
-gridEl.addEventListener('click', (e) => {
-  const noteEl = e.target.closest('article.note');
+gridEl.addEventListener("click", (e) => {
+  const noteEl = e.target.closest("article.note");
   if (noteEl) {
     const itemId = noteEl.dataset.id;
     const allItems = window.gratitudeItems || [];
-    const item = allItems.find(it => it.id === itemId);
+    const item = allItems.find((it) => it.id === itemId);
     if (item) {
       openCommentModal(item);
     }
   }
 });
 
-closeModalBtn.addEventListener('click', closeCommentModal);
-commentModalEl.addEventListener('click', (e) => {
+closeModalBtn.addEventListener("click", closeCommentModal);
+commentModalEl.addEventListener("click", (e) => {
   if (e.target === commentModalEl) closeCommentModal();
 });
 
-commentInputEl.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') handleAddComment();
+// Validation real-time khi gõ bình luận
+commentInputEl.addEventListener("input", function (e) {
+  if (containsBadWords(commentInputEl.value)) {
+    commentInputEl.setCustomValidity("Vui lòng không sử dụng từ ngữ không phù hợp.");
+    commentInputEl.style.borderColor = "#e74c3c";
+  } else {
+    commentInputEl.setCustomValidity("");
+    commentInputEl.style.borderColor = "";
+  }
 });
 
-reactionBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-        const reactionId = btn.dataset.reaction;
-        if (selectedReaction === reactionId) {
-            selectedReaction = null;
-            btn.classList.remove('selected');
-        } else {
-            selectedReaction = reactionId;
-            reactionBtns.forEach(otherBtn => otherBtn.classList.remove('selected'));
-            btn.classList.add('selected');
-        }
-    });
+commentInputEl.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") handleAddComment();
+});
+
+// XỬ LÝ REACT VÀO BÀI VIẾT (giống Facebook)
+reactionBtns.forEach((btn) => {
+  btn.addEventListener("click", async () => {
+    if (!currentItem) return;
+
+    const reactionId = btn.dataset.reaction;
+    const userId = getUserId();
+    const reactions = { ...(currentItem.reactions || {}) };
+
+    console.log("Clicked reaction:", reactionId, "Current user:", userId);
+    console.log("Before update:", reactions);
+
+    // Toggle reaction: nếu đã chọn reaction này thì bỏ, nếu chưa/khác thì chọn
+    if (reactions[userId] === reactionId) {
+      // Bỏ reaction
+      delete reactions[userId];
+      console.log("Removing reaction");
+    } else {
+      // Thêm/đổi reaction
+      reactions[userId] = reactionId;
+      console.log("Adding/Changing reaction");
+    }
+
+    console.log("After update:", reactions);
+
+    try {
+      await updateGratitude(currentItem.id, { reactions });
+      currentItem.reactions = reactions;
+      renderCommentsAndReactions(currentItem);
+    } catch (error) {
+      console.error("Lỗi khi cập nhật reaction:", error);
+    }
+  });
 });
 
 // --- FIREBASE LISTENER ---
@@ -255,7 +402,7 @@ listenGratitudes((items) => {
   window.gratitudeItems = items;
 
   const stats = { notgreat: 0, okay: 0, good: 0, great: 0 };
-  items.forEach(it => {
+  items.forEach((it) => {
     if (it?.emotionKey && stats.hasOwnProperty(it.emotionKey)) {
       stats[it.emotionKey]++;
     }
@@ -266,12 +413,12 @@ listenGratitudes((items) => {
   renderGrid(items);
 
   if (currentItem) {
-      const updatedItem = items.find(it => it?.id === currentItem.id);
-      if (updatedItem) {
-          currentItem = updatedItem;
-          renderCommentsAndReactions(updatedItem);
-      } else {
-          closeCommentModal();
-      }
+    const updatedItem = items.find((it) => it?.id === currentItem.id);
+    if (updatedItem) {
+      currentItem = updatedItem;
+      renderCommentsAndReactions(updatedItem);
+    } else {
+      closeCommentModal();
+    }
   }
 });

@@ -523,26 +523,26 @@ body.bg {
   padding: 0;
   margin: -1px;
   overflow: hidden;
-clip: rect(0, 0, 0, 0);
-white-space: nowrap;
-border-width: 0;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 
 /* Hiệu ứng chọn: ảnh phóng to nhẹ + nhãn đậm hơn */
 .mood-btn .face img {
-transition: transform 0.12s ease, filter 0.15s ease;
+  transition: transform 0.12s ease, filter 0.15s ease;
 }
 .mood-btn.active .face img {
-transform: scale(1.08);
-filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.18));
+  transform: scale(1.08);
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.18));
 }
 
 .mood-btn .label {
-transition: color 0.12s ease, font-weight 0.12s ease;
+  transition: color 0.12s ease, font-weight 0.12s ease;
 }
 .mood-btn.active .label {
-color: #111;
-font-weight: 700;
+  color: #111;
+  font-weight: 700;
 }
 
 /* ===== BẮT ĐẦU KHỐI MÃ CSS CHO MODAL BÌNH LUẬN (THÊM VÀO CUỐI TỆP) ===== */
@@ -647,11 +647,11 @@ font-weight: 700;
 }
 
 .gratitude-item-modal .content {
-  flex-grow: 1; 
+  flex-grow: 1;
   display: flex;
-  align-items: center; 
-  justify-content: center; 
-  text-align: center; 
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   font-weight: 500;
   line-height: 1.6;
   z-index: 2;
@@ -663,12 +663,12 @@ font-weight: 700;
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  gap: 8px; 
+  gap: 8px;
   font-size: 0.8em;
   color: var(--muted);
   z-index: 2;
   position: relative;
-  margin-top: auto; 
+  margin-top: auto;
 }
 
 .gratitude-item-modal .footer .tag {
@@ -677,7 +677,7 @@ font-weight: 700;
   gap: 6px;
   padding: 4px 10px;
   border-radius: 999px;
-  font-size: 1em; 
+  font-size: 1em;
   background: rgba(255, 255, 255, 0.85);
   color: var(--ink);
   font-weight: 500;
@@ -719,13 +719,13 @@ font-weight: 700;
 
 /* Khu vực nhập bình luận */
 .comment-input-area {
-  margin-top: 20px;
+  margin-top: 16px;
 }
 
 .comment-input-wrapper {
   display: flex;
   align-items: center;
-  background-color: #f6f3f1; 
+  background-color: #f6f3f1;
   border-radius: 24px;
   padding: 4px 14px;
   border: none;
@@ -742,16 +742,18 @@ font-weight: 700;
   color: #222;
 }
 
+/* Biểu tượng cảm xúc bên trong khung comment */
 .reaction-icons {
   display: flex;
   gap: 0;
-  padding-left: 8px;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .react-btn {
   font-size: 1.2em;
   cursor: pointer;
-  transition: transform 0.2s, filter 0.2s;
+  transition: transform 0.2s, filter 0.2s, background-color 0.2s;
   background: transparent;
   border: none;
   padding: 4px;
@@ -764,15 +766,21 @@ font-weight: 700;
   width: 28px;
   height: 28px;
   pointer-events: none;
+  transition: transform 0.2s;
 }
 
 .react-btn:hover {
   transform: scale(1.15);
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .react-btn.selected {
+  transform: scale(1.1);
+}
+
+.react-btn.selected img {
   transform: scale(1.2);
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
 /* Danh sách bình luận */
@@ -792,23 +800,23 @@ font-weight: 700;
 
 .comment-avatar {
   flex-shrink: 0;
-  width: 36px; 
-  height: 36px; 
+  width: 36px;
+  height: 36px;
 }
 
 .comment-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 50%; 
+  border-radius: 50%;
 }
 
 .comment-content-wrapper {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    width: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
 }
 
 .comment-content {
@@ -836,64 +844,63 @@ font-weight: 700;
 
 /* SỬA ĐỔI: Khu vực đếm reactions và tooltip */
 #reaction-summary {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .reaction-count-item {
-    position: relative;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    background: #fff;
-    border: 1px solid #eee;
-    border-radius: 50%;
-    padding: 1px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 50%;
+  padding: 1px;
 }
 .reaction-count-item img {
-    width: 20px;
-    height: 20px;
+  width: 20px;
+  height: 20px;
 }
 .reaction-count-item:not(:first-child) {
-    margin-left: -10px; /* Icon chồng lên nhau */
+  margin-left: -10px; /* Icon chồng lên nhau */
 }
 
 .summary-count {
-    font-size: 14px;
-    font-weight: 600;
-    color: #555;
-    margin-left: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+  margin-left: 12px;
 }
 
 /* Tooltip cho reaction count */
 .reaction-count-item:hover::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 125%;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(0,0,0,0.8);
-    color: #fff;
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: bold;
-    white-space: nowrap;
-    z-index: 10;
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+  white-space: nowrap;
+  z-index: 10;
 }
 .reaction-count-item:hover::before {
-    content: '';
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    border-width: 5px;
-    border-style: solid;
-    border-color: rgba(0,0,0,0.8) transparent transparent transparent;
-    z-index: 10;
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent;
+  z-index: 10;
 }
-
 
 /* Thêm màu sắc cho thẻ trong modal */
 .gratitude-item-modal.great {
@@ -920,8 +927,15 @@ font-weight: 700;
 
 /* Responsive cho modal */
 @media (max-width: 880px) {
-  .comment-modal-body { flex-direction: column; gap: 18px; }
-  .comment-modal-right { border-left: none; padding-left: 0; max-height: 280px; }
+  .comment-modal-body {
+    flex-direction: column;
+    gap: 18px;
+  }
+  .comment-modal-right {
+    border-left: none;
+    padding-left: 0;
+    max-height: 280px;
+  }
 }
 
 /* ==== KẾT THÚC KHỐI MÃ CSS CHO MODAL BÌNH LUẬN ==== */
