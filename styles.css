@@ -938,4 +938,147 @@ body.bg {
   }
 }
 
+/* Responsive đặc biệt cho modal comment trên mobile nhỏ */
+@media (max-width: 480px) {
+  html,
+  body {
+    max-width: 100vw;
+    width: 100vw;
+    height: 100vh;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+  .modal-overlay,
+  .comment-modal-content,
+  .comment-modal-body,
+  .comment-modal-left,
+  .comment-modal-right,
+  .gratitude-item-modal,
+  .comment-input-area,
+  .comment-input-wrapper,
+  #comment-list,
+  .comment-summary {
+    max-width: 100vw !important;
+    width: 100vw !important;
+    box-sizing: border-box;
+    margin: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    overflow-x: hidden;
+  }
+  .gratitude-item-modal {
+    border-radius: 10px !important;
+    padding: 10px 6px !important;
+  }
+  .comment-input-wrapper {
+    border-radius: 16px;
+    padding: 8px 10px !important;
+  }
+  #comment-input {
+    font-size: 1.1em;
+    padding: 8px 2px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .reaction-icons {
+    gap: 6px;
+    width: auto;
+    max-width: 100vw;
+  }
+  .react-btn img {
+    width: 28px;
+    height: 28px;
+    max-width: 100%;
+  }
+  .comment-content {
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 1em;
+    max-width: 80vw;
+    word-break: break-word;
+    width: 100%;
+  }
+  .close-comment-modal {
+    top: 8px;
+    right: 12px;
+    font-size: 24px;
+  }
+}
+@media (max-width: 450px) {
+  .modal-overlay,
+  .comment-modal-content,
+  .comment-modal-body,
+  .comment-modal-left,
+  .comment-modal-right,
+  .gratitude-item-modal,
+  .comment-input-area,
+  .comment-input-wrapper,
+  #comment-list,
+  .comment-summary {
+    max-width: 100vw !important;
+    width: 100vw !important;
+    box-sizing: border-box;
+    margin: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    overflow-x: hidden;
+  }
+  .gratitude-item-modal {
+    border-radius: 6px !important;
+    padding: 8px 2px !important;
+  }
+  .comment-input-wrapper {
+    border-radius: 12px;
+    padding: 6px 6px !important;
+  }
+  .react-btn img {
+    width: 24px;
+    height: 24px;
+  }
+  .comment-content {
+    padding: 6px 8px;
+    border-radius: 8px;
+    font-size: 0.98em;
+    max-width: 90vw;
+  }
+}
+@media (max-width: 400px) {
+  .modal-overlay,
+  .comment-modal-content,
+  .comment-modal-body,
+  .comment-modal-left,
+  .comment-modal-right,
+  .gratitude-item-modal,
+  .comment-input-area,
+  .comment-input-wrapper,
+  #comment-list,
+  .comment-summary {
+    max-width: 100vw !important;
+    width: 100vw !important;
+    box-sizing: border-box;
+    margin: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    overflow-x: hidden;
+  }
+  .gratitude-item-modal {
+    border-radius: 4px !important;
+    padding: 6px 1px !important;
+  }
+  .comment-input-wrapper {
+    border-radius: 8px;
+    padding: 4px 4px !important;
+  }
+  .react-btn img {
+    width: 20px;
+    height: 20px;
+  }
+  .comment-content {
+    padding: 4px 6px;
+    border-radius: 6px;
+    font-size: 0.95em;
+    max-width: 95vw;
+  }
+}
+
 /* ==== KẾT THÚC KHỐI MÃ CSS CHO MODAL BÌNH LUẬN ==== */
