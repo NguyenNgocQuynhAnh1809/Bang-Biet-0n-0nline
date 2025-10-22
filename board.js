@@ -1,3 +1,4 @@
+// contents of board.js
 import { listenGratitudes, EMOTIONS, updateGratitude } from "./firebase.js";
 
 // Danh sách từ ngữ không phù hợp
@@ -152,6 +153,7 @@ function renderGrid(items) {
     div.className = "note";
     div.dataset.id = it.id;
     if (it.emotionKey) div.classList.add("emo-" + it.emotionKey);
+    if (it.comments && it.comments.length > 0) div.classList.add("has-comments");
 
     const watermarkHtml =
       it.emotionKey && EMOTIONS[it.emotionKey]?.img
@@ -160,8 +162,15 @@ function renderGrid(items) {
           }" alt="" loading="lazy" /></div>`
         : "";
 
+    // Nếu có bình luận, chèn một GIF/indicator ở góc phải dưới cùng
+    const commentIndicatorHtml =
+      it.comments && it.comments.length > 0
+        ? `<div class="comment-gif" aria-hidden="true"><img src="comment.gif" alt="Có bình luận" loading="lazy"></div>`
+        : "";
+
     div.innerHTML = `
       ${watermarkHtml}
+      ${commentIndicatorHtml}
       <div class="text"></div>
       <div class="meta">
         <span class="badge">
@@ -319,7 +328,12 @@ async function handleAddComment() {
     await updateGratitude(currentItem.id, { comments: newComments });
     currentItem.comments = newComments;
     renderCommentsAndReactions(currentItem);
-
+    // Sau khi cập nhật thành công, cập nhật cả lưới (nếu cần hiển thị indicator ngay)
+    const allItems = window.gratitudeItems || [];
+    const gridItem = allItems.find((it) => it.id === currentItem.id);
+    if (gridItem) {
+      gridItem.comments = newComments;
+    }
     commentInputEl.value = "";
   } catch (error) {
     console.error("Lỗi khi thêm bình luận:", error);
