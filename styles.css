@@ -476,6 +476,27 @@ body.bg {
   filter: blur(0.02px);
 }
 
+/* GIF/indicator ở góc phải dưới khi thẻ có bình luận */
+.comment-gif {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  pointer-events: none;
+}
+.comment-gif img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+}
+
 /* Hover pop for card */
 .note:hover {
   transform: translateY(-6px);
@@ -486,6 +507,10 @@ body.bg {
 .note > * {
   position: relative;
   z-index: 1;
+}
+/* Đảm bảo comment-gif nằm trên các thành phần khác */
+.note > .comment-gif {
+  z-index: 2;
 }
 
 /* adjust badge to be slightly translucent over colored background */
