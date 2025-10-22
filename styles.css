@@ -476,6 +476,23 @@ body.bg {
   filter: blur(0.02px);
 }
 
+/* ===== SỬA LỖI VỊ TRÍ GIF ===== */
+.comment-gif {
+  position: absolute;
+  right: 8px;  /* Đặt ở góc phải */
+  bottom: 8px; /* Đặt ở góc dưới */
+  width: 40px;
+  height: 40px;
+  z-index: 2; /* Nổi lên trên các thành phần khác */
+  pointer-events: none; /* Không chặn click vào thẻ */
+}
+.comment-gif img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+}
+
 /* Hover pop for card */
 .note:hover {
   transform: translateY(-6px);
@@ -486,6 +503,10 @@ body.bg {
 .note > * {
   position: relative;
   z-index: 1;
+}
+/* Ghi đè để GIF nằm trên cùng */
+.note > .comment-gif {
+  z-index: 2;
 }
 
 /* adjust badge to be slightly translucent over colored background */
@@ -931,6 +952,14 @@ body.bg {
     flex-direction: column;
     gap: 18px;
   }
+
+  /* Đảm bảo các cột chiếm toàn bộ chiều rộng và loại bỏ min-width */
+  .comment-modal-left,
+  .comment-modal-right {
+    flex-basis: 100%; /* Chiếm toàn bộ chiều rộng */
+    min-width: 0;     /* Ghi đè min-width */
+  }
+
   .comment-modal-right {
     border-left: none;
     padding-left: 0;
@@ -938,4 +967,17 @@ body.bg {
   }
 }
 
+/* Tinh chỉnh cho màn hình di động rất nhỏ */
+@media (max-width: 480px) {
+  .comment-modal-content {
+    padding: 20px 15px; /* Giảm padding */
+    max-height: 85vh;   /* Giới hạn chiều cao an toàn */
+    overflow-y: auto;   /* Cho phép cuộn toàn bộ modal */
+  }
+
+  .close-comment-modal {
+    top: 8px;
+    right: 10px;
+  }
+}
 /* ==== KẾT THÚC KHỐI MÃ CSS CHO MODAL BÌNH LUẬN ==== */
