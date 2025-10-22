@@ -476,6 +476,23 @@ body.bg {
   filter: blur(0.02px);
 }
 
+/* ===== SỬA LỖI VỊ TRÍ GIF ===== */
+.comment-gif {
+  position: absolute;
+  right: 8px;  /* Đặt ở góc phải */
+  bottom: 8px; /* Đặt ở góc dưới */
+  width: 40px;
+  height: 40px;
+  z-index: 2; /* Nổi lên trên các thành phần khác */
+  pointer-events: none; /* Không chặn click vào thẻ */
+}
+.comment-gif img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+}
+
 /* Hover pop for card */
 .note:hover {
   transform: translateY(-6px);
@@ -486,6 +503,10 @@ body.bg {
 .note > * {
   position: relative;
   z-index: 1;
+}
+/* Ghi đè để GIF nằm trên cùng */
+.note > .comment-gif {
+  z-index: 2;
 }
 
 /* adjust badge to be slightly translucent over colored background */
