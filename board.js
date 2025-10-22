@@ -1,4 +1,3 @@
-// contents of board.js
 import { listenGratitudes, EMOTIONS, updateGratitude } from "./firebase.js";
 
 // Danh sách từ ngữ không phù hợp
@@ -153,7 +152,6 @@ function renderGrid(items) {
     div.className = "note";
     div.dataset.id = it.id;
     if (it.emotionKey) div.classList.add("emo-" + it.emotionKey);
-    if (it.comments && it.comments.length > 0) div.classList.add("has-comments");
 
     const watermarkHtml =
       it.emotionKey && EMOTIONS[it.emotionKey]?.img
@@ -162,15 +160,8 @@ function renderGrid(items) {
           }" alt="" loading="lazy" /></div>`
         : "";
 
-    // Nếu có bình luận, chèn một GIF/indicator ở góc phải dưới cùng
-    const commentIndicatorHtml =
-      it.comments && it.comments.length > 0
-        ? `<div class="comment-gif" aria-hidden="true"><img src="comment.gif" alt="Có bình luận" loading="lazy"></div>`
-        : "";
-
     div.innerHTML = `
       ${watermarkHtml}
-      ${commentIndicatorHtml}
       <div class="text"></div>
       <div class="meta">
         <span class="badge">
@@ -184,10 +175,22 @@ function renderGrid(items) {
       </div>
     `;
     div.querySelector(".text").textContent = it.text;
+    
+    // ===== SỬA LỖI BỐ CỤC =====
+    // Thêm GIF vào sau khi đã tạo xong cấu trúc thẻ để không làm hỏng bố cục
+    if (it.comments && it.comments.length > 0) {
+      const commentGif = document.createElement("div");
+      commentGif.className = "comment-gif";
+      commentGif.setAttribute("aria-hidden", "true");
+      commentGif.innerHTML = `<img src="comment.gif" alt="Có bình luận" loading="lazy">`;
+      div.appendChild(commentGif);
+    }
+    
     gridEl.appendChild(div);
   });
   gridEl.setAttribute("aria-busy", "false");
 }
+
 
 function renderCommentsAndReactions(item) {
   const comments = item.comments || [];
@@ -206,7 +209,6 @@ function renderCommentsAndReactions(item) {
     const commentItem = document.createElement("div");
     commentItem.className = "comment-item";
 
-    // THAY ĐỔI: Không hiển thị reaction riêng lẻ bên cạnh bình luận nữa
     commentItem.innerHTML = `
             <div class="comment-avatar"><img src="${mascotImg}" alt="" /></div>
             <div class="comment-content-wrapper">
@@ -246,11 +248,9 @@ function renderCommentsAndReactions(item) {
 
   // Cập nhật trạng thái đã chọn của user hiện tại
   const userReaction = reactions[userId];
-  console.log("User reaction:", userReaction, "All reactions:", reactions);
   reactionBtns.forEach((btn) => {
     if (btn.dataset.reaction === userReaction) {
       btn.classList.add("selected");
-      console.log("Selected button:", btn.dataset.reaction);
     } else {
       btn.classList.remove("selected");
     }
@@ -328,12 +328,6 @@ async function handleAddComment() {
     await updateGratitude(currentItem.id, { comments: newComments });
     currentItem.comments = newComments;
     renderCommentsAndReactions(currentItem);
-    // Sau khi cập nhật thành công, cập nhật cả lưới (nếu cần hiển thị indicator ngay)
-    const allItems = window.gratitudeItems || [];
-    const gridItem = allItems.find((it) => it.id === currentItem.id);
-    if (gridItem) {
-      gridItem.comments = newComments;
-    }
     commentInputEl.value = "";
   } catch (error) {
     console.error("Lỗi khi thêm bình luận:", error);
@@ -384,27 +378,17 @@ reactionBtns.forEach((btn) => {
     const userId = getUserId();
     const reactions = { ...(currentItem.reactions || {}) };
 
-    console.log("Clicked reaction:", reactionId, "Current user:", userId);
-    console.log("Before update:", reactions);
-
-    // Toggle reaction: nếu đã chọn reaction này thì bỏ, nếu chưa/khác thì chọn
     if (reactions[userId] === reactionId) {
-      // Bỏ reaction
       delete reactions[userId];
-      console.log("Removing reaction");
     } else {
-      // Thêm/đổi reaction
       reactions[userId] = reactionId;
-      console.log("Adding/Changing reaction");
     }
-
-    console.log("After update:", reactions);
 
     try {
       await updateGratitude(currentItem.id, { reactions });
       currentItem.reactions = reactions;
       renderCommentsAndReactions(currentItem);
-    } catch (error) {
+    } catch (error)
       console.error("Lỗi khi cập nhật reaction:", error);
     }
   });
