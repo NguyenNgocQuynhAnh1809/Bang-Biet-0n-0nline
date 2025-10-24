@@ -60,7 +60,7 @@ for (const key of Object.keys(EMOTIONS)) {
         showKey = "bad";
         textEl.value = "";
         textEl.disabled = true;
-        textEl.placeholder = "Không thể viết lời biết ơn với cảm xúc này.";
+        textEl.placeholder = "Bạn nên quan tâm bản thân mình nhiều hơn.";
         setTimeout(() => {
           if (
             confirm(
