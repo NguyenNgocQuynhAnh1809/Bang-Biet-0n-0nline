@@ -471,9 +471,9 @@ function renderCommentsAndReactions(item) {
 
   // SỬA ĐỔI: Hiển thị reactions của bài viết (không phải của comment)
   reactionSummaryEl.innerHTML = "";
-  const sortedReactions = Object.keys(reactionCounts).sort(
-    (a, b) => reactionCounts[b] - reactionCounts[a]
-  );
+  const sortedReactions = Object.keys(reactionCounts)
+    .filter((reactionId) => reactionId !== "bad")
+    .sort((a, b) => reactionCounts[b] - reactionCounts[a]);
 
   let totalReactionCount = 0;
   sortedReactions.forEach((reactionId) => {
@@ -539,7 +539,9 @@ function openCommentModal(item) {
           <span class="callus-btn">CALL US</span>
         </div>
       </div>
+      <div class="comment-blocked">Không thể bình luận với cảm xúc này.</div>
     `;
+    commentInputEl.disabled = true;
   } else {
     const emotionClass =
       item.emotionKey === "notgreat" ? "not-great" : item.emotionKey;
@@ -583,7 +585,8 @@ function closeCommentModal() {
 
 async function handleAddComment() {
   const commentText = commentInputEl.value.trim();
-  if (commentText === "" || !currentItem) return;
+  if (commentText === "" || !currentItem || currentItem.emotionKey === "bad")
+    return;
 
   // Kiểm tra bad words
   if (containsBadWords(commentText)) {

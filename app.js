@@ -49,27 +49,52 @@ for (const key of Object.keys(EMOTIONS)) {
     for (const b of moodListEl.querySelectorAll(".mood-btn"))
       b.classList.toggle("active", b === btn);
     // Chuyển đổi hiển thị ảnh artwork
-    const artworkImgs = ["hero", "notgreat", "good", "great", "okay"];
+    const artworkImgs = ["hero", "notgreat", "good", "great", "okay", "bad"];
     artworkImgs.forEach((k) => {
       const img = document.getElementById(`artworkImg-${k}`);
       if (img) img.classList.remove("active");
     });
     let showKey = "hero";
     switch (key) {
+      case "bad":
+        showKey = "bad";
+        textEl.value = "";
+        textEl.disabled = true;
+        textEl.placeholder = "Không thể viết lời biết ơn với cảm xúc này.";
+        setTimeout(() => {
+          if (
+            confirm(
+              "Bạn đang cảm thấy không ổn. Bạn có muốn gọi số hotline hỗ trợ không?"
+            )
+          ) {
+            window.location.href = "tel:1900 1267"; // Số hotline ví dụ
+          }
+        }, 300);
+        break;
       case "notgreat":
         showKey = "notgreat";
+        textEl.disabled = false;
+        textEl.placeholder = "Viết lời biết ơn hôm nay...";
         break;
       case "good":
         showKey = "good";
+        textEl.disabled = false;
+        textEl.placeholder = "Viết lời biết ơn hôm nay...";
         break;
       case "great":
         showKey = "great";
+        textEl.disabled = false;
+        textEl.placeholder = "Viết lời biết ơn hôm nay...";
         break;
       case "okay":
         showKey = "okay";
+        textEl.disabled = false;
+        textEl.placeholder = "Viết lời biết ơn hôm nay...";
         break;
       default:
         showKey = "hero";
+        textEl.disabled = false;
+        textEl.placeholder = "Viết lời biết ơn hôm nay...";
     }
     const showImg = document.getElementById(`artworkImg-${showKey}`);
     if (showImg) showImg.classList.add("active");
