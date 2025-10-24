@@ -20,6 +20,12 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 export const EMOTIONS = {
+  bad: {
+    label: "Bad",
+    img: "./bad.png",
+    color: "#ff6b6b",
+    score: 0,
+  },
   notgreat: {
     label: "Not Great",
     img: "./notgreat.png",

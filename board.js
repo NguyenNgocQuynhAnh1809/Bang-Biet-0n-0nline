@@ -514,37 +514,60 @@ function renderCommentsAndReactions(item) {
 
 function openCommentModal(item) {
   currentItem = item;
-  const emotionClass =
-    item.emotionKey === "notgreat" ? "not-great" : item.emotionKey;
-  const mascotImg = EMOTIONS[item.emotionKey]?.img;
-
-  modalCardDetailEl.className = `gratitude-item-modal ${emotionClass}`;
-
-  if (mascotImg) {
-    modalCardDetailEl.style.setProperty(
-      "--modal-emoji-url",
-      `url(${mascotImg})`
-    );
-    modalCardDetailEl.classList.add("has-emoji-image");
-  } else {
+  if (item.emotionKey === "bad") {
+    modalCardDetailEl.className = "gratitude-item-modal bad-support";
+    modalCardDetailEl.style.setProperty("--modal-emoji-url", "none");
     modalCardDetailEl.classList.remove("has-emoji-image");
+    modalCardDetailEl.innerHTML = `
+      <div class="support-psychology">
+        <div class="support-row">
+          <img src="Hem202_logo.jpg" alt="Hẻm 202" class="support-logo" />
+          <div class="support-info">
+            <div>Trang kết nối hỗ trợ tư vấn tâm lý dành cho sinh viên Trường Đại Học FPT tại TP. Hồ Chí Minh.</div>
+            <div><span class="support-phone">📞 028 7300 5585</span></div>
+          </div>
+        </div>
+        <div class="support-row">
+          <img src="BoYTeLogo.jpg" alt="Bộ Y Tế" class="support-logo" />
+          <div class="support-info">
+            <div>“CẤP CỨU TRẦM CẢM”</div>
+            <div><span class="support-phone">📞 1900 1267</span></div>
+          </div>
+        </div>
+        <div class="support-row support-callus">
+          <img src="callus.png" alt="Call Us" class="callus-img" />
+          <span class="callus-btn">CALL US</span>
+        </div>
+      </div>
+    `;
+  } else {
+    const emotionClass =
+      item.emotionKey === "notgreat" ? "not-great" : item.emotionKey;
+    const mascotImg = EMOTIONS[item.emotionKey]?.img;
+    modalCardDetailEl.className = `gratitude-item-modal ${emotionClass}`;
+    if (mascotImg) {
+      modalCardDetailEl.style.setProperty(
+        "--modal-emoji-url",
+        `url(${mascotImg})`
+      );
+      modalCardDetailEl.classList.add("has-emoji-image");
+    } else {
+      modalCardDetailEl.classList.remove("has-emoji-image");
+    }
+    modalCardDetailEl.innerHTML = `
+      <div class="content"><p>${item.text}</p></div>
+      <div class="footer">
+        <span class="tag">
+          <span class="dot" style="background-color: ${
+            item.color || "#eee"
+          }"></span>
+          ${item.emotionLabel}
+        </span>
+        <span class="time">• ${timeAgo(item.createdAt || Date.now())}</span>
+      </div>
+    `;
   }
-
-  modalCardDetailEl.innerHTML = `
-    <div class="content"><p>${item.text}</p></div>
-    <div class="footer">
-      <span class="tag">
-        <span class="dot" style="background-color: ${
-          item.color || "#eee"
-        }"></span>
-        ${item.emotionLabel}
-      </span>
-      <span class="time">• ${timeAgo(item.createdAt || Date.now())}</span>
-    </div>
-  `;
-
   renderCommentsAndReactions(item);
-
   commentModalEl.style.display = "flex";
   setTimeout(() => commentModalEl.classList.add("show"), 10);
 }
