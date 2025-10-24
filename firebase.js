@@ -22,21 +22,31 @@ const db = getFirestore(app);
 export const EMOTIONS = {
   bad: {
     label: "Bad",
-    img: "./bad.png",
+    img: "assets/images/bad.png",
     color: "#ff6b6b",
     score: 0,
   },
   notgreat: {
     label: "Not Great",
-    img: "./notgreat.png",
+    img: "assets/images/notgreat.png",
     color: "var(--notgreat)",
     score: 1,
   },
-  okay: { label: "Okay", img: "./okay.png", color: "var(--okay)", score: 2 },
-  good: { label: "Good", img: "./good.png", color: "var(--good)", score: 3 },
+  okay: {
+    label: "Okay",
+    img: "assets/images/okay.png",
+    color: "var(--okay)",
+    score: 2,
+  },
+  good: {
+    label: "Good",
+    img: "assets/images/good.png",
+    color: "var(--good)",
+    score: 3,
+  },
   great: {
     label: "Great",
-    img: "./great.png",
+    img: "assets/images/great.png",
     color: "var(--great)",
     score: 4,
   },

@@ -13,11 +13,11 @@ let chosenKey = null;
 
 // Preload GIFs for better performance
 const GIFS = [
-  "./not_great_gif.gif",
-  "./good_gif.gif",
-  "./great_gif.gif",
-  "./okay_gif.gif",
-  "./hero.jpg",
+  "assets/images/not_great_gif.gif",
+  "assets/images/good_gif.gif",
+  "assets/images/great_gif.gif",
+  "assets/images/okay_gif.gif",
+  "assets/images/hero.jpg",
 ];
 GIFS.forEach((src) => {
   const img = new window.Image();
