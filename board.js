@@ -483,7 +483,10 @@ function renderCommentsAndReactions(item) {
       const reactionCountEl = document.createElement("div");
       reactionCountEl.className = "reaction-count-item";
       reactionCountEl.setAttribute("data-tooltip", count);
-      reactionCountEl.innerHTML = `<img src="${reactionId}.png" alt="">`;
+      // Use EMOTIONS mapping for correct image path
+      const imgSrc =
+        EMOTIONS[reactionId]?.img || `assets/images/${reactionId}.png`;
+      reactionCountEl.innerHTML = `<img src="${imgSrc}" alt="">`;
       reactionSummaryEl.appendChild(reactionCountEl);
     }
   });
