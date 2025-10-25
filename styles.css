@@ -1,10 +1,12 @@
 /* Artwork image switching */
+
 .artwork-img {
   opacity: 0;
   transform: scale(0.98);
   pointer-events: none;
   width: 100%;
-  height: auto;
+  height: 100%; /* SỬA Ở ĐÂY: Bắt nó cao 100% bằng cha */
+  object-fit: contain; /* THÊM VÀO: Đảm bảo ảnh không bị méo/cắt */
   transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
     transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   position: absolute;
@@ -1075,6 +1077,30 @@ body.bg {
     position: relative;
     z-index: 2; /* nằm trên */
     margin-bottom: 8px; /* tạo khoảng cách với nút Gửi */
+  }
+  /* Artwork image switching */
+  .artwork-img {
+    opacity: 0;
+    pointer-events: none;
+    width: 100%;
+    height: 100%; /* <--- SỬA "auto" THÀNH "100%" */
+    transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    object-fit: cover !important; /* Giữ nguyên cái này */
+    overflow: hidden;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 0;
+  }
+  .artwork-img.active {
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 1;
+  }
+
+  /* When the artwork becomes active, scale its inner elements back to normal */
+  .artwork-img.active > * {
+    transform: scale(1);
   }
 }
 
