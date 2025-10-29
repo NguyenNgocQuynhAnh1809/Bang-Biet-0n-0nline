@@ -1,18 +1,5 @@
 // ===== AI CHATBOX HANDLER =====
 
-// Import Firebase
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-import {
-  getFirestore,
-  doc,
-  getDoc,
-} from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
-import { firebaseConfig } from "./firebase-config.js";
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig, "chatbox-app");
-const db = getFirestore(app);
-
 class AIChatbox {
   constructor() {
     this.chatbox = document.getElementById("ai-chatbox");
@@ -63,8 +50,16 @@ class AIChatbox {
   }
 
   async init() {
-    // ===== LOAD CONFIG TỪ FIRESTORE =====
-    await this.loadConfigFromFirestore();
+    // ===== BỎ QUA FIRESTORE - DÙNG API TRỰC TIẾP =====
+    this.useCloudFunction = false; // Không dùng Cloud Function
+    console.log("✅ Using direct Perplexity API");
+    console.log("   Model:", this.apiConfig.perplexity.model);
+    console.log(
+      "   API Key:",
+      this.apiConfig.perplexity.key
+        ? "***" + this.apiConfig.perplexity.key.slice(-8)
+        : "NOT SET"
+    );
 
     // Event listeners
     this.sendBtn.addEventListener("click", () => this.sendMessage());
@@ -95,74 +90,6 @@ class AIChatbox {
       }
       this.toggleChatbox();
     });
-  }
-
-  // ===== LOAD API CONFIG TỪ FIRESTORE =====
-  async loadConfigFromFirestore() {
-    try {
-      console.log("🔄 Loading API config from Firestore...");
-      const configDoc = await getDoc(doc(db, "config", "ai_chatbox"));
-
-      if (configDoc.exists()) {
-        const config = configDoc.data();
-
-        // ===== TẮT CLOUD FUNCTION - DÙNG API TRỰC TIẾP =====
-        // Cloud Function cần Blaze Plan, tạm thời dùng direct API
-        this.useCloudFunction = false;
-
-        if (config.useCloudFunction === true && config.functionUrl) {
-          console.warn("⚠️ Cloud Function disabled - using direct API instead");
-          console.warn("   (Cloud Functions requires Blaze Plan)");
-        } else {
-          // ===== GỌI API TRỰC TIẾP =====
-          this.useCloudFunction = false;
-
-          // Cập nhật API config (chỉ khi KHÔNG dùng Cloud Function)
-          if (config.apiKey) {
-            this.apiConfig.perplexity.key = config.apiKey;
-          }
-          if (config.apiUrl) {
-            this.apiConfig.perplexity.url = config.apiUrl;
-          }
-          if (config.model) {
-            this.apiConfig.perplexity.model = config.model;
-          }
-
-          console.log(
-            "⚠️ Using direct API call (API key exposed in Firestore)"
-          );
-          console.log("   Model:", this.apiConfig.perplexity.model);
-          console.log(
-            "   Key:",
-            this.apiConfig.perplexity.key
-              ? "***" + this.apiConfig.perplexity.key.slice(-8)
-              : "NOT SET"
-          );
-        }
-
-        // Kiểm tra enabled flag
-        if (config.enabled === false) {
-          console.warn("⚠️ AI Chatbox is disabled in config");
-          this.apiType = "custom"; // Fallback mode
-        }
-
-        console.log("✅ API config loaded successfully from Firestore");
-      } else {
-        console.warn("⚠️ Config document not found in Firestore");
-        console.warn("   Create config document with these fields:");
-        console.warn("   - useCloudFunction: true");
-        console.warn(
-          "   - functionUrl: https://us-central1-bang-biet-on.cloudfunctions.net/chatWithAI"
-        );
-        console.warn("   - model: sonar");
-        console.warn("   - enabled: true");
-        this.apiType = "custom"; // Fallback mode
-      }
-    } catch (error) {
-      console.error("❌ Error loading config from Firestore:", error);
-      console.warn("   Using fallback responses only");
-      this.apiType = "custom"; // Fallback mode
-    }
   }
 
   toggleChatbox() {
@@ -498,14 +425,9 @@ class AIChatbox {
     );
 
     try {
-      // ===== KIỂM TRA: DÙNG CLOUD FUNCTION HAY GỌI API TRỰC TIẾP? =====
-      if (this.useCloudFunction && this.cloudFunctionUrl) {
-        console.log("🔄 Using Cloud Function (secure)...");
-        return await this.callCloudFunction(message);
-      } else {
-        console.log("🔄 Using direct API call (legacy)...");
-        return await this.callDirectAPI(message);
-      }
+      // ===== LUÔN LUÔN GỌI API TRỰC TIẾP =====
+      console.log("🔄 Calling Perplexity API directly...");
+      return await this.callDirectAPI(message);
     } catch (error) {
       console.error("Error calling AI API:", error);
       return this.getFallbackResponse(message);
@@ -609,48 +531,47 @@ class AIChatbox {
             messages: [
               {
                 role: "system",
-                content: `Bạn là trợ lý sức khỏe tinh thần - chuyên GỢI Ý CÔNG CỤ/TÀI NGUYÊN dựa trên trạng thái cảm xúc.
+                content: `Bạn là trợ lý AI hỗ trợ cảm xúc. Phân tích tin nhắn và phản hồi theo 4 trạng thái:
 
-🎯 NHIỆM VỤ: Nhận diện cảm xúc → CHỌN NGẪU NHIÊN 3 trong 5 công cụ phù hợp
+🔴 DISTRESS (Căng thẳng/Khủng hoảng)
+Keywords: "buồn", "mệt mỏi", "stress", "áp lực", "bất lực", "deadline", "toang", "muốn khóc", "thất vọng", "cạn năng lượng"
+Công cụ (chọn NGẪU NHIÊN 3 trong 5):
+1. 🆘 SOS Kit khi Stress/Lo âu - Bộ công cụ khẩn cấp xử lý stress nhanh
+2. 🧘 Grounding 5-4-3-2-1 - Bài tập 5 phút quay về thực tại
+3. 📞 Kết nối Chuyên gia - Nói chuyện với tư vấn viên
+4. 💚 Body-Check - Nhận diện căng thẳng trong cơ thể
+5. 😴 Cải thiện Giấc ngủ - Mẹo ngủ ngon khi stress
 
-📚 THƯ VIỆN CÔNG CỤ (Chọn random 3/5):
+🟡 NEUTRAL (Bình thường/Trung tính)
+Keywords: "bình thường", "ổn", "tàm tạm", "không có gì đặc biệt", "50/50", "cứ sao sao", "bth"
+Công cụ (chọn NGẪU NHIÊN 3 trong 5):
+1. 📝 Nhật ký cảm xúc - Viết ra để hiểu "okay" nghĩa là gì
+2. 🎯 Gọi tên cảm xúc - Tìm từ chính xác cho cảm giác
+3. 🗺️ Bản đồ cảm xúc - Vẽ lại hành trình cảm xúc
+4. 💝 Thực hành Tự Trắc Ẩn - Chấp nhận trạng thái hiện tại
+5. 🧭 Self-Discovery Journey - Khám phá bản thân sâu hơn
 
-🔴 CHO TRẠNG THÁI KHÓ KHĂN (buồn, stress, mệt mỏi, áp lực, muốn khóc):
-1. 🆘 Kỹ thuật Grounding 5-4-3-2-1 (5 phút xử lý khẩn cấp)
-2. 💚 Kiểm tra căng thẳng cơ thể (Body-Check)
-3. 📞 Kết nối chuyên gia tâm lý (Hotline: 1800 1567)
-4. 😴 Hướng dẫn cải thiện giấc ngủ
-5. 🫁 Bài tập thở 4-7-8 (giảm lo âu)
+🟢 POSITIVE (Tích cực/Thoải mái)
+Keywords: "vui", "zui", "ổn áp", "okla", "thoải mái", "nhẹ nhõm", "có động lực", "yêu đời", "cảm thấy tốt"
+Công cụ (chọn NGẪU NHIÊN 3 trong 5):
+1. 💬 Positive Self-Talk - Củng cố năng lượng tích cực
+2. 🛡️ Đặt Ranh Giới - Bảo vệ năng lượng tốt
+3. ✉️ Thư Tự Chữa Lành - Viết thư cho chính mình
+4. 🙏 Gratitude Wall - Ghi lại điều biết ơn
+5. 🌱 Growth Mindset - Phát triển tư duy tăng trưởng
 
-🟡 CHO TRẠNG THÁI TRUNG TÍNH (bình thường, ổn, không vui không buồn):
-1. 📝 Nhật ký cảm xúc (Emotion Journal)
-2. 🎯 Bài tập gọi tên cảm xúc chính xác
-3. 🗺️ Vẽ bản đồ cảm xúc cá nhân
-4. 💝 Thực hành tự trắc ẩn
-5. 🔍 Khám phá giá trị bản thân
+🟣 THRIVING (Hạnh phúc tột đỉnh)
+Keywords: "tuyệt vời", "hạnh phúc quá", "dzui xỉu", "10 điểm", "yêu đời vcl", "năng lượng full", "đỉnh", "biết ơn"
+Công cụ (chọn 1):
+1. 🌟 Gratitude Wall (Cộng đồng) - Chia sẻ lòng biết ơn để truyền cảm hứng
 
-🟢 CHO TRẠNG THÁI TÍCH CỰC (vui, thoải mái, có động lực):
-1. 💬 Hướng dẫn Positive Self-Talk
-2. 🛡️ Công cụ đặt ranh giới bảo vệ năng lượng
-3. ✉️ Viết thư tự chữa lành
-4. 🙏 Ghi nhật ký biết ơn cá nhân
-5. 💪 Xây dựng thói quen tích cực
+FORMAT TRẢ LỜI:
+1. Câu đồng cảm ngắn (1 câu)
+2. Liệt kê 3 công cụ (mỗi dòng: emoji + tên + mô tả ngắn)
+3. Hỏi "Bạn muốn thử gì?"
 
-🟣 CHO TRẠNG THÁI HẠNH PHÚC (tuyệt vời, yêu đời, biết ơn):
-1. 🌟 Chia sẻ lên Gratitude Wall cộng đồng
-2. 🎁 Hành động tử tế cho người khác
-3. � Nhìn lại hành trình trưởng thành
-
-�📝 CẤU TRÚC TRẢ LỜI:
-1. Thừa nhận cảm xúc: "Tôi thấy bạn đang [cảm xúc]"
-2. GỢI Ý NGẪU NHIÊN 3 trong 5 công cụ (mỗi lần khác nhau)
-3. Kết thúc: "Bạn muốn thử cái nào trước?"
-
-⚠️ QUAN TRỌNG:
-- MỖI LẦN TRẢ LỜI phải CHỌN RANDOM 3 công cụ khác nhau
-- Emoji + tên công cụ + mô tả 1 dòng
-- KHÔNG tư vấn trực tiếp, CHỈ gợi ý công cụ
-- Ngắn gọn (max 5 dòng)`,
+MỖI LẦN TRẢ LỜI phải CHỌN RANDOM 3 công cụ khác nhau (trừ THRIVING chỉ có 1).
+Trả lời NGẮN GỌN, KHÔNG dài dòng, bằng tiếng Việt.`,
               },
               ...this.conversationHistory.slice(-4),
               {
@@ -658,8 +579,8 @@ class AIChatbox {
                 content: message,
               },
             ],
-            max_tokens: 250,
-            temperature: 0.8,
+            max_tokens: 300,
+            temperature: 0.7,
           };
           break;
 
