@@ -1,0 +1,43 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /gratitudes/{docId} {
+      allow read: if true; // Giữ nguyên: Bất kỳ ai cũng có thể đọc.
+
+      // Giữ nguyên quy tắc tạo mục mới của bạn
+      allow create: if request.resource.data.keys().hasOnly([
+        'text','emotionKey','emotionLabel','color','moodScore','createdAt','clientId','dateKey'
+      ])
+      && request.resource.data.text is string
+      && request.resource.data.text.size() > 0
+      && request.resource.data.text.size() <= 240
+      && request.resource.data.emotionKey in ['bad','notgreat','okay','good','great']
+      && request.time == request.resource.data.createdAt
+      && docId == request.resource.data.clientId + '_' + request.resource.data.dateKey
+      && !exists(/databases/$(database)/documents/gratitudes/$(docId));
+
+      // QUY TẮC MỚI ĐÃ SỬA LỖI: Cho phép cập nhật comments và reactions
+      allow update: if 
+        // 1. Yêu cầu cập nhật chỉ được chứa trường 'comments' và/hoặc 'reactions'.
+        request.writeFields.hasOnly(['comments', 'reactions'])
+        // 2. Nếu có 'comments', phải là một danh sách (List)
+        && (!request.writeFields.hasAny(['comments']) || request.resource.data.comments is list)
+        // 3. Nếu có 'reactions', phải là một object (map)
+        && (!request.writeFields.hasAny(['reactions']) || request.resource.data.reactions is map);
+
+      // Giữ nguyên: Không cho phép xóa
+      allow delete: if false;
+    }
+
+    // ===== THÊM MỚI: Rule cho AI Chatbox Config =====
+    match /config/{docId} {
+      // ✅ Cho phép đọc config (nhưng KHÔNG LƯU API KEY ở đây)
+      // Config chỉ chứa: useCloudFunction, functionUrl, model, enabled
+      allow read: if true;
+      
+      // ❌ KHÔNG cho phép ghi từ frontend (chỉ thông qua Firebase Console)
+      // Để bảo mật, chỉ admin có thể cập nhật config
+      allow write: if false;
+    }
+  }
+}
