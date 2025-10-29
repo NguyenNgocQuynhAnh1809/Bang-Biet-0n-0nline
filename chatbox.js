@@ -24,13 +24,13 @@ class AIChatbox {
     this.toggleIcon = this.toggleBtn.querySelector(".toggle-icon");
 
     // ===== CẤU HÌNH API =====
-    this.apiType = "perplexity"; // Sử dụng Perplexity API (key từ Firestore)
+    this.apiType = "perplexity"; // Sử dụng Perplexity API
 
-    // API Configuration - Key sẽ được load từ Firestore
+    // API Configuration - CẢNH BÁO: API key này có thể bị lộ qua Console!
     this.apiConfig = {
       perplexity: {
         url: "https://api.perplexity.ai/chat/completions",
-        key: "", // ← Sẽ được load từ Firestore config
+        key: "", // ⚠️ API key trực tiếp (KHÔNG AN TOÀN)
         model: "sonar",
       },
       openai: {
@@ -106,14 +106,15 @@ class AIChatbox {
       if (configDoc.exists()) {
         const config = configDoc.data();
 
-        // ===== KIỂM TRA XEM CÓ DÙNG CLOUD FUNCTION KHÔNG =====
+        // ===== TẮT CLOUD FUNCTION - DÙNG API TRỰC TIẾP =====
+        // Cloud Function cần Blaze Plan, tạm thời dùng direct API
+        this.useCloudFunction = false;
+
         if (config.useCloudFunction === true && config.functionUrl) {
-          this.useCloudFunction = true;
-          this.cloudFunctionUrl = config.functionUrl;
-          console.log("✅ Using Cloud Function (API key is secure)");
-          console.log("   Function URL:", this.cloudFunctionUrl);
+          console.warn("⚠️ Cloud Function disabled - using direct API instead");
+          console.warn("   (Cloud Functions requires Blaze Plan)");
         } else {
-          // ===== FALLBACK: GỌI API TRỰC TIẾP (CŨ) =====
+          // ===== GỌI API TRỰC TIẾP =====
           this.useCloudFunction = false;
 
           // Cập nhật API config (chỉ khi KHÔNG dùng Cloud Function)
@@ -608,17 +609,57 @@ class AIChatbox {
             messages: [
               {
                 role: "system",
-                content:
-                  "Bạn là trợ lý AI hỗ trợ cảm xúc. Trả lời ngắn gọn (2-4 câu), thiết thực, ấm áp bằng tiếng Việt. Không dài dòng.",
+                content: `Bạn là trợ lý sức khỏe tinh thần - chuyên GỢI Ý CÔNG CỤ/TÀI NGUYÊN dựa trên trạng thái cảm xúc.
+
+🎯 NHIỆM VỤ: Nhận diện cảm xúc → CHỌN NGẪU NHIÊN 3 trong 5 công cụ phù hợp
+
+📚 THƯ VIỆN CÔNG CỤ (Chọn random 3/5):
+
+🔴 CHO TRẠNG THÁI KHÓ KHĂN (buồn, stress, mệt mỏi, áp lực, muốn khóc):
+1. 🆘 Kỹ thuật Grounding 5-4-3-2-1 (5 phút xử lý khẩn cấp)
+2. 💚 Kiểm tra căng thẳng cơ thể (Body-Check)
+3. 📞 Kết nối chuyên gia tâm lý (Hotline: 1800 1567)
+4. 😴 Hướng dẫn cải thiện giấc ngủ
+5. 🫁 Bài tập thở 4-7-8 (giảm lo âu)
+
+🟡 CHO TRẠNG THÁI TRUNG TÍNH (bình thường, ổn, không vui không buồn):
+1. 📝 Nhật ký cảm xúc (Emotion Journal)
+2. 🎯 Bài tập gọi tên cảm xúc chính xác
+3. 🗺️ Vẽ bản đồ cảm xúc cá nhân
+4. 💝 Thực hành tự trắc ẩn
+5. 🔍 Khám phá giá trị bản thân
+
+🟢 CHO TRẠNG THÁI TÍCH CỰC (vui, thoải mái, có động lực):
+1. 💬 Hướng dẫn Positive Self-Talk
+2. 🛡️ Công cụ đặt ranh giới bảo vệ năng lượng
+3. ✉️ Viết thư tự chữa lành
+4. 🙏 Ghi nhật ký biết ơn cá nhân
+5. 💪 Xây dựng thói quen tích cực
+
+🟣 CHO TRẠNG THÁI HẠNH PHÚC (tuyệt vời, yêu đời, biết ơn):
+1. 🌟 Chia sẻ lên Gratitude Wall cộng đồng
+2. 🎁 Hành động tử tế cho người khác
+3. � Nhìn lại hành trình trưởng thành
+
+�📝 CẤU TRÚC TRẢ LỜI:
+1. Thừa nhận cảm xúc: "Tôi thấy bạn đang [cảm xúc]"
+2. GỢI Ý NGẪU NHIÊN 3 trong 5 công cụ (mỗi lần khác nhau)
+3. Kết thúc: "Bạn muốn thử cái nào trước?"
+
+⚠️ QUAN TRỌNG:
+- MỖI LẦN TRẢ LỜI phải CHỌN RANDOM 3 công cụ khác nhau
+- Emoji + tên công cụ + mô tả 1 dòng
+- KHÔNG tư vấn trực tiếp, CHỈ gợi ý công cụ
+- Ngắn gọn (max 5 dòng)`,
               },
-              ...this.conversationHistory.slice(-4), // Chỉ giữ 4 tin nhắn gần nhất
+              ...this.conversationHistory.slice(-4),
               {
                 role: "user",
                 content: message,
               },
             ],
-            max_tokens: 200,
-            temperature: 0.7,
+            max_tokens: 250,
+            temperature: 0.8,
           };
           break;
 
