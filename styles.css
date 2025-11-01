@@ -691,6 +691,10 @@ body.bg {
   border-radius: 50%;
 }
 
+.gratitude-item-modal .footer .time {
+  display: none;
+}
+
 .gratitude-item-modal::before {
   content: none;
 }
